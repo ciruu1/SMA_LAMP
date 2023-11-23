@@ -5,6 +5,7 @@
  * Created on 23 de noviembre de 2023, 10:22
  */
 
+// TODO cambiar los nombres del diagrama de alto nivel de Español a Inglés
 
 #include <xc.h>
 #include <proc/pic16f886.h>
