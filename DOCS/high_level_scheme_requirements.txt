@@ -1,0 +1,36 @@
+EM(estructura mecánica)[1]
+CA(Circuito de acondicionamiento)[1]
+↑
+Interfaz HW(Pines)[1]
+↓
+SMA_LAMP(Sistema de monitorización y actuación):
+    - Encendido:
+        · leer_configuracion()
+        · avisar_SMA_COMP()
+    - Apagado:
+        · guardar_configuración()
+        · avisar_SMA_COMP()
+    - Monitorización:
+        · recibir_comandos_pc()
+        · leer_sensores():
+            # Ruido
+            # CO2
+            # Temperatura
+            # Humedad
+            # Luminosidad
+    - Actuación:
+        · enviar_info_pc()
+        · modificar_velocidad()
+        · modificar_LEDs()
+
+↕
+Interfaz_PC(USART)
+↕
+SMA_COMP(LINUX):
+    - SW:
+        · enviar_comandos() {cambiar_luz, cambiar_iluminación, modificar_velocidad}
+        · mostrar_estado_variables() {Ruido, CO2, Humedad, Temperatura, Luminosidad} [2]
+        · comprobar_estado_SMA_LAMP()
+
+[1]: Nos viene ya hecho, no tenemos que desarrollar nada
+[2]: Se muestra el estado de los sensores, aquellos que no estén disponibles también aparecerá el estado: NO DISPONIBLE TODAVÍA(De acuerdo con el requisito ENC-20)
