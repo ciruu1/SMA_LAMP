@@ -19,10 +19,10 @@
         <itemPath>SPI/spi-master-v1.c</itemPath>
       </logicalFolder>
       <itemPath>main.c</itemPath>
-      <itemPath>SPI/poweron.c</itemPath>
-      <itemPath>SPI/poweroff.c</itemPath>
-      <itemPath>SPI/monitor.c</itemPath>
-      <itemPath>SPI/action.c</itemPath>
+      <itemPath>action.c</itemPath>
+      <itemPath>monitor.c</itemPath>
+      <itemPath>poweroff.c</itemPath>
+      <itemPath>poweron.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
