@@ -7,7 +7,13 @@
 
 
 #include <xc.h>
+#include <proc/pic16f886.h>
 
-void main(void) {
+// With this library we configure the main settings on the MCU
+#include "Init/initall.h"
+
+void main(void)
+{
+    init(); // We call the initialize function in the init library 
     return;
 }

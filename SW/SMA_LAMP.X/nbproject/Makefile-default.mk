@@ -51,17 +51,17 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Source Files Quoted if spaced
-SOURCEFILES_QUOTED_IF_SPACED=main.c
+SOURCEFILES_QUOTED_IF_SPACED=Init/initall.c SPI/spi-master-v1.c main.c SPI/poweron.c SPI/poweroff.c SPI/monitor.c SPI/action.c
 
 # Object Files Quoted if spaced
-OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/main.p1
-POSSIBLE_DEPFILES=${OBJECTDIR}/main.p1.d
+OBJECTFILES_QUOTED_IF_SPACED=${OBJECTDIR}/Init/initall.p1 ${OBJECTDIR}/SPI/spi-master-v1.p1 ${OBJECTDIR}/main.p1 ${OBJECTDIR}/SPI/poweron.p1 ${OBJECTDIR}/SPI/poweroff.p1 ${OBJECTDIR}/SPI/monitor.p1 ${OBJECTDIR}/SPI/action.p1
+POSSIBLE_DEPFILES=${OBJECTDIR}/Init/initall.p1.d ${OBJECTDIR}/SPI/spi-master-v1.p1.d ${OBJECTDIR}/main.p1.d ${OBJECTDIR}/SPI/poweron.p1.d ${OBJECTDIR}/SPI/poweroff.p1.d ${OBJECTDIR}/SPI/monitor.p1.d ${OBJECTDIR}/SPI/action.p1.d
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/main.p1
+OBJECTFILES=${OBJECTDIR}/Init/initall.p1 ${OBJECTDIR}/SPI/spi-master-v1.p1 ${OBJECTDIR}/main.p1 ${OBJECTDIR}/SPI/poweron.p1 ${OBJECTDIR}/SPI/poweroff.p1 ${OBJECTDIR}/SPI/monitor.p1 ${OBJECTDIR}/SPI/action.p1
 
 # Source Files
-SOURCEFILES=main.c
+SOURCEFILES=Init/initall.c SPI/spi-master-v1.c main.c SPI/poweron.c SPI/poweroff.c SPI/monitor.c SPI/action.c
 
 
 
@@ -88,6 +88,22 @@ MP_PROCESSOR_OPTION=16F886
 # ------------------------------------------------------------------------------------
 # Rules for buildStep: compile
 ifeq ($(TYPE_IMAGE), DEBUG_RUN)
+${OBJECTDIR}/Init/initall.p1: Init/initall.c  nbproject/Makefile-${CND_CONF}.mk 
+	@${MKDIR} "${OBJECTDIR}/Init" 
+	@${RM} ${OBJECTDIR}/Init/initall.p1.d 
+	@${RM} ${OBJECTDIR}/Init/initall.p1 
+	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c  -D__DEBUG=1  -mdebugger=none   -mdfp="${DFP_DIR}/xc8"  -fno-short-double -fno-short-float -O0 -fasmfile -maddrqual=ignore -xassembler-with-cpp -mwarn=-3 -Wa,-a -DXPRJ_default=$(CND_CONF)  -msummary=-psect,-class,+mem,-hex,-file  -ginhx32 -Wl,--data-init -mno-keep-startup -mno-osccal -mno-resetbits -mno-save-resetbits -mno-download -mno-stackcall -mno-default-config-bits $(COMPARISON_BUILD)  -std=c99 -gdwarf-3 -mstack=compiled:auto:auto     -o ${OBJECTDIR}/Init/initall.p1 Init/initall.c 
+	@-${MV} ${OBJECTDIR}/Init/initall.d ${OBJECTDIR}/Init/initall.p1.d 
+	@${FIXDEPS} ${OBJECTDIR}/Init/initall.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
+	
+${OBJECTDIR}/SPI/spi-master-v1.p1: SPI/spi-master-v1.c  nbproject/Makefile-${CND_CONF}.mk 
+	@${MKDIR} "${OBJECTDIR}/SPI" 
+	@${RM} ${OBJECTDIR}/SPI/spi-master-v1.p1.d 
+	@${RM} ${OBJECTDIR}/SPI/spi-master-v1.p1 
+	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c  -D__DEBUG=1  -mdebugger=none   -mdfp="${DFP_DIR}/xc8"  -fno-short-double -fno-short-float -O0 -fasmfile -maddrqual=ignore -xassembler-with-cpp -mwarn=-3 -Wa,-a -DXPRJ_default=$(CND_CONF)  -msummary=-psect,-class,+mem,-hex,-file  -ginhx32 -Wl,--data-init -mno-keep-startup -mno-osccal -mno-resetbits -mno-save-resetbits -mno-download -mno-stackcall -mno-default-config-bits $(COMPARISON_BUILD)  -std=c99 -gdwarf-3 -mstack=compiled:auto:auto     -o ${OBJECTDIR}/SPI/spi-master-v1.p1 SPI/spi-master-v1.c 
+	@-${MV} ${OBJECTDIR}/SPI/spi-master-v1.d ${OBJECTDIR}/SPI/spi-master-v1.p1.d 
+	@${FIXDEPS} ${OBJECTDIR}/SPI/spi-master-v1.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
+	
 ${OBJECTDIR}/main.p1: main.c  nbproject/Makefile-${CND_CONF}.mk 
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/main.p1.d 
@@ -96,7 +112,55 @@ ${OBJECTDIR}/main.p1: main.c  nbproject/Makefile-${CND_CONF}.mk
 	@-${MV} ${OBJECTDIR}/main.d ${OBJECTDIR}/main.p1.d 
 	@${FIXDEPS} ${OBJECTDIR}/main.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
 	
+${OBJECTDIR}/SPI/poweron.p1: SPI/poweron.c  nbproject/Makefile-${CND_CONF}.mk 
+	@${MKDIR} "${OBJECTDIR}/SPI" 
+	@${RM} ${OBJECTDIR}/SPI/poweron.p1.d 
+	@${RM} ${OBJECTDIR}/SPI/poweron.p1 
+	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c  -D__DEBUG=1  -mdebugger=none   -mdfp="${DFP_DIR}/xc8"  -fno-short-double -fno-short-float -O0 -fasmfile -maddrqual=ignore -xassembler-with-cpp -mwarn=-3 -Wa,-a -DXPRJ_default=$(CND_CONF)  -msummary=-psect,-class,+mem,-hex,-file  -ginhx32 -Wl,--data-init -mno-keep-startup -mno-osccal -mno-resetbits -mno-save-resetbits -mno-download -mno-stackcall -mno-default-config-bits $(COMPARISON_BUILD)  -std=c99 -gdwarf-3 -mstack=compiled:auto:auto     -o ${OBJECTDIR}/SPI/poweron.p1 SPI/poweron.c 
+	@-${MV} ${OBJECTDIR}/SPI/poweron.d ${OBJECTDIR}/SPI/poweron.p1.d 
+	@${FIXDEPS} ${OBJECTDIR}/SPI/poweron.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
+	
+${OBJECTDIR}/SPI/poweroff.p1: SPI/poweroff.c  nbproject/Makefile-${CND_CONF}.mk 
+	@${MKDIR} "${OBJECTDIR}/SPI" 
+	@${RM} ${OBJECTDIR}/SPI/poweroff.p1.d 
+	@${RM} ${OBJECTDIR}/SPI/poweroff.p1 
+	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c  -D__DEBUG=1  -mdebugger=none   -mdfp="${DFP_DIR}/xc8"  -fno-short-double -fno-short-float -O0 -fasmfile -maddrqual=ignore -xassembler-with-cpp -mwarn=-3 -Wa,-a -DXPRJ_default=$(CND_CONF)  -msummary=-psect,-class,+mem,-hex,-file  -ginhx32 -Wl,--data-init -mno-keep-startup -mno-osccal -mno-resetbits -mno-save-resetbits -mno-download -mno-stackcall -mno-default-config-bits $(COMPARISON_BUILD)  -std=c99 -gdwarf-3 -mstack=compiled:auto:auto     -o ${OBJECTDIR}/SPI/poweroff.p1 SPI/poweroff.c 
+	@-${MV} ${OBJECTDIR}/SPI/poweroff.d ${OBJECTDIR}/SPI/poweroff.p1.d 
+	@${FIXDEPS} ${OBJECTDIR}/SPI/poweroff.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
+	
+${OBJECTDIR}/SPI/monitor.p1: SPI/monitor.c  nbproject/Makefile-${CND_CONF}.mk 
+	@${MKDIR} "${OBJECTDIR}/SPI" 
+	@${RM} ${OBJECTDIR}/SPI/monitor.p1.d 
+	@${RM} ${OBJECTDIR}/SPI/monitor.p1 
+	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c  -D__DEBUG=1  -mdebugger=none   -mdfp="${DFP_DIR}/xc8"  -fno-short-double -fno-short-float -O0 -fasmfile -maddrqual=ignore -xassembler-with-cpp -mwarn=-3 -Wa,-a -DXPRJ_default=$(CND_CONF)  -msummary=-psect,-class,+mem,-hex,-file  -ginhx32 -Wl,--data-init -mno-keep-startup -mno-osccal -mno-resetbits -mno-save-resetbits -mno-download -mno-stackcall -mno-default-config-bits $(COMPARISON_BUILD)  -std=c99 -gdwarf-3 -mstack=compiled:auto:auto     -o ${OBJECTDIR}/SPI/monitor.p1 SPI/monitor.c 
+	@-${MV} ${OBJECTDIR}/SPI/monitor.d ${OBJECTDIR}/SPI/monitor.p1.d 
+	@${FIXDEPS} ${OBJECTDIR}/SPI/monitor.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
+	
+${OBJECTDIR}/SPI/action.p1: SPI/action.c  nbproject/Makefile-${CND_CONF}.mk 
+	@${MKDIR} "${OBJECTDIR}/SPI" 
+	@${RM} ${OBJECTDIR}/SPI/action.p1.d 
+	@${RM} ${OBJECTDIR}/SPI/action.p1 
+	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c  -D__DEBUG=1  -mdebugger=none   -mdfp="${DFP_DIR}/xc8"  -fno-short-double -fno-short-float -O0 -fasmfile -maddrqual=ignore -xassembler-with-cpp -mwarn=-3 -Wa,-a -DXPRJ_default=$(CND_CONF)  -msummary=-psect,-class,+mem,-hex,-file  -ginhx32 -Wl,--data-init -mno-keep-startup -mno-osccal -mno-resetbits -mno-save-resetbits -mno-download -mno-stackcall -mno-default-config-bits $(COMPARISON_BUILD)  -std=c99 -gdwarf-3 -mstack=compiled:auto:auto     -o ${OBJECTDIR}/SPI/action.p1 SPI/action.c 
+	@-${MV} ${OBJECTDIR}/SPI/action.d ${OBJECTDIR}/SPI/action.p1.d 
+	@${FIXDEPS} ${OBJECTDIR}/SPI/action.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
+	
 else
+${OBJECTDIR}/Init/initall.p1: Init/initall.c  nbproject/Makefile-${CND_CONF}.mk 
+	@${MKDIR} "${OBJECTDIR}/Init" 
+	@${RM} ${OBJECTDIR}/Init/initall.p1.d 
+	@${RM} ${OBJECTDIR}/Init/initall.p1 
+	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c   -mdfp="${DFP_DIR}/xc8"  -fno-short-double -fno-short-float -O0 -fasmfile -maddrqual=ignore -xassembler-with-cpp -mwarn=-3 -Wa,-a -DXPRJ_default=$(CND_CONF)  -msummary=-psect,-class,+mem,-hex,-file  -ginhx32 -Wl,--data-init -mno-keep-startup -mno-osccal -mno-resetbits -mno-save-resetbits -mno-download -mno-stackcall -mno-default-config-bits $(COMPARISON_BUILD)  -std=c99 -gdwarf-3 -mstack=compiled:auto:auto     -o ${OBJECTDIR}/Init/initall.p1 Init/initall.c 
+	@-${MV} ${OBJECTDIR}/Init/initall.d ${OBJECTDIR}/Init/initall.p1.d 
+	@${FIXDEPS} ${OBJECTDIR}/Init/initall.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
+	
+${OBJECTDIR}/SPI/spi-master-v1.p1: SPI/spi-master-v1.c  nbproject/Makefile-${CND_CONF}.mk 
+	@${MKDIR} "${OBJECTDIR}/SPI" 
+	@${RM} ${OBJECTDIR}/SPI/spi-master-v1.p1.d 
+	@${RM} ${OBJECTDIR}/SPI/spi-master-v1.p1 
+	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c   -mdfp="${DFP_DIR}/xc8"  -fno-short-double -fno-short-float -O0 -fasmfile -maddrqual=ignore -xassembler-with-cpp -mwarn=-3 -Wa,-a -DXPRJ_default=$(CND_CONF)  -msummary=-psect,-class,+mem,-hex,-file  -ginhx32 -Wl,--data-init -mno-keep-startup -mno-osccal -mno-resetbits -mno-save-resetbits -mno-download -mno-stackcall -mno-default-config-bits $(COMPARISON_BUILD)  -std=c99 -gdwarf-3 -mstack=compiled:auto:auto     -o ${OBJECTDIR}/SPI/spi-master-v1.p1 SPI/spi-master-v1.c 
+	@-${MV} ${OBJECTDIR}/SPI/spi-master-v1.d ${OBJECTDIR}/SPI/spi-master-v1.p1.d 
+	@${FIXDEPS} ${OBJECTDIR}/SPI/spi-master-v1.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
+	
 ${OBJECTDIR}/main.p1: main.c  nbproject/Makefile-${CND_CONF}.mk 
 	@${MKDIR} "${OBJECTDIR}" 
 	@${RM} ${OBJECTDIR}/main.p1.d 
@@ -104,6 +168,38 @@ ${OBJECTDIR}/main.p1: main.c  nbproject/Makefile-${CND_CONF}.mk
 	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c   -mdfp="${DFP_DIR}/xc8"  -fno-short-double -fno-short-float -O0 -fasmfile -maddrqual=ignore -xassembler-with-cpp -mwarn=-3 -Wa,-a -DXPRJ_default=$(CND_CONF)  -msummary=-psect,-class,+mem,-hex,-file  -ginhx32 -Wl,--data-init -mno-keep-startup -mno-osccal -mno-resetbits -mno-save-resetbits -mno-download -mno-stackcall -mno-default-config-bits $(COMPARISON_BUILD)  -std=c99 -gdwarf-3 -mstack=compiled:auto:auto     -o ${OBJECTDIR}/main.p1 main.c 
 	@-${MV} ${OBJECTDIR}/main.d ${OBJECTDIR}/main.p1.d 
 	@${FIXDEPS} ${OBJECTDIR}/main.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
+	
+${OBJECTDIR}/SPI/poweron.p1: SPI/poweron.c  nbproject/Makefile-${CND_CONF}.mk 
+	@${MKDIR} "${OBJECTDIR}/SPI" 
+	@${RM} ${OBJECTDIR}/SPI/poweron.p1.d 
+	@${RM} ${OBJECTDIR}/SPI/poweron.p1 
+	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c   -mdfp="${DFP_DIR}/xc8"  -fno-short-double -fno-short-float -O0 -fasmfile -maddrqual=ignore -xassembler-with-cpp -mwarn=-3 -Wa,-a -DXPRJ_default=$(CND_CONF)  -msummary=-psect,-class,+mem,-hex,-file  -ginhx32 -Wl,--data-init -mno-keep-startup -mno-osccal -mno-resetbits -mno-save-resetbits -mno-download -mno-stackcall -mno-default-config-bits $(COMPARISON_BUILD)  -std=c99 -gdwarf-3 -mstack=compiled:auto:auto     -o ${OBJECTDIR}/SPI/poweron.p1 SPI/poweron.c 
+	@-${MV} ${OBJECTDIR}/SPI/poweron.d ${OBJECTDIR}/SPI/poweron.p1.d 
+	@${FIXDEPS} ${OBJECTDIR}/SPI/poweron.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
+	
+${OBJECTDIR}/SPI/poweroff.p1: SPI/poweroff.c  nbproject/Makefile-${CND_CONF}.mk 
+	@${MKDIR} "${OBJECTDIR}/SPI" 
+	@${RM} ${OBJECTDIR}/SPI/poweroff.p1.d 
+	@${RM} ${OBJECTDIR}/SPI/poweroff.p1 
+	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c   -mdfp="${DFP_DIR}/xc8"  -fno-short-double -fno-short-float -O0 -fasmfile -maddrqual=ignore -xassembler-with-cpp -mwarn=-3 -Wa,-a -DXPRJ_default=$(CND_CONF)  -msummary=-psect,-class,+mem,-hex,-file  -ginhx32 -Wl,--data-init -mno-keep-startup -mno-osccal -mno-resetbits -mno-save-resetbits -mno-download -mno-stackcall -mno-default-config-bits $(COMPARISON_BUILD)  -std=c99 -gdwarf-3 -mstack=compiled:auto:auto     -o ${OBJECTDIR}/SPI/poweroff.p1 SPI/poweroff.c 
+	@-${MV} ${OBJECTDIR}/SPI/poweroff.d ${OBJECTDIR}/SPI/poweroff.p1.d 
+	@${FIXDEPS} ${OBJECTDIR}/SPI/poweroff.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
+	
+${OBJECTDIR}/SPI/monitor.p1: SPI/monitor.c  nbproject/Makefile-${CND_CONF}.mk 
+	@${MKDIR} "${OBJECTDIR}/SPI" 
+	@${RM} ${OBJECTDIR}/SPI/monitor.p1.d 
+	@${RM} ${OBJECTDIR}/SPI/monitor.p1 
+	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c   -mdfp="${DFP_DIR}/xc8"  -fno-short-double -fno-short-float -O0 -fasmfile -maddrqual=ignore -xassembler-with-cpp -mwarn=-3 -Wa,-a -DXPRJ_default=$(CND_CONF)  -msummary=-psect,-class,+mem,-hex,-file  -ginhx32 -Wl,--data-init -mno-keep-startup -mno-osccal -mno-resetbits -mno-save-resetbits -mno-download -mno-stackcall -mno-default-config-bits $(COMPARISON_BUILD)  -std=c99 -gdwarf-3 -mstack=compiled:auto:auto     -o ${OBJECTDIR}/SPI/monitor.p1 SPI/monitor.c 
+	@-${MV} ${OBJECTDIR}/SPI/monitor.d ${OBJECTDIR}/SPI/monitor.p1.d 
+	@${FIXDEPS} ${OBJECTDIR}/SPI/monitor.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
+	
+${OBJECTDIR}/SPI/action.p1: SPI/action.c  nbproject/Makefile-${CND_CONF}.mk 
+	@${MKDIR} "${OBJECTDIR}/SPI" 
+	@${RM} ${OBJECTDIR}/SPI/action.p1.d 
+	@${RM} ${OBJECTDIR}/SPI/action.p1 
+	${MP_CC} $(MP_EXTRA_CC_PRE) -mcpu=$(MP_PROCESSOR_OPTION) -c   -mdfp="${DFP_DIR}/xc8"  -fno-short-double -fno-short-float -O0 -fasmfile -maddrqual=ignore -xassembler-with-cpp -mwarn=-3 -Wa,-a -DXPRJ_default=$(CND_CONF)  -msummary=-psect,-class,+mem,-hex,-file  -ginhx32 -Wl,--data-init -mno-keep-startup -mno-osccal -mno-resetbits -mno-save-resetbits -mno-download -mno-stackcall -mno-default-config-bits $(COMPARISON_BUILD)  -std=c99 -gdwarf-3 -mstack=compiled:auto:auto     -o ${OBJECTDIR}/SPI/action.p1 SPI/action.c 
+	@-${MV} ${OBJECTDIR}/SPI/action.d ${OBJECTDIR}/SPI/action.p1.d 
+	@${FIXDEPS} ${OBJECTDIR}/SPI/action.p1.d $(SILENT) -rsi ${MP_CC_DIR}../  
 	
 endif
 
