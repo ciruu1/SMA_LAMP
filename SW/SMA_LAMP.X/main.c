@@ -11,7 +11,7 @@
 #include <proc/pic16f886.h>
 
 // With this library we configure the main settings on the MCU
-#include "Init/initall.h"
+#include "Init/initall.c"
 
 void main(void)
 {
