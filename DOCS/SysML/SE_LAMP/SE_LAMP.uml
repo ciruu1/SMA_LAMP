@@ -72,37 +72,28 @@
           </packagedElement>
         </packagedElement>
         <packagedElement xmi:type="uml:Package" xmi:id="_0aFvoI4rEe6Tifnxg4Wq9A" name="State_Diagram">
-          <packagedElement xmi:type="uml:StateMachine" xmi:id="_GsO00I4tEe6Tifnxg4Wq9A" name="Behaviour">
-            <region xmi:type="uml:Region" xmi:id="_7lNq0I4xEe6GhLbWVN8dOg" name="RegionB">
-              <transition xmi:type="uml:Transition" xmi:id="_Ir0-8I42Ee6o5KCN1LGczg" source="_-kzocI4xEe6GhLbWVN8dOg" target="_HfThcI42Ee6o5KCN1LGczg"/>
-              <subvertex xmi:type="uml:Pseudostate" xmi:id="_9XnckI4xEe6GhLbWVN8dOg" name="EntryPointB" kind="entryPoint"/>
-              <subvertex xmi:type="uml:Pseudostate" xmi:id="_-kzocI4xEe6GhLbWVN8dOg" name="ExitPointB" kind="exitPoint"/>
-            </region>
-          </packagedElement>
           <packagedElement xmi:type="uml:StateMachine" xmi:id="_TXOO0I4vEe6GhLbWVN8dOg" name="PowerOn">
+            <connectionPoint xmi:type="uml:Pseudostate" xmi:id="_8sj54I7gEe6W26qYkado_g" name="ExitPointAD" kind="exitPoint"/>
             <region xmi:type="uml:Region" xmi:id="_T6f7AI4vEe6GhLbWVN8dOg" name="RegionA">
-              <transition xmi:type="uml:Transition" xmi:id="_dqyT4I4wEe6GhLbWVN8dOg" source="_UlDT4I4vEe6GhLbWVN8dOg" target="_ItL4kI4wEe6GhLbWVN8dOg"/>
-              <transition xmi:type="uml:Transition" xmi:id="_mTsDYI4wEe6GhLbWVN8dOg" source="_ItL4kI4wEe6GhLbWVN8dOg" target="_gVlGMI4wEe6GhLbWVN8dOg"/>
-              <transition xmi:type="uml:Transition" xmi:id="_tvvlQI4wEe6GhLbWVN8dOg" name="yes" kind="local" source="_gVlGMI4wEe6GhLbWVN8dOg" target="_phNIQI4wEe6GhLbWVN8dOg"/>
-              <transition xmi:type="uml:Transition" xmi:id="_HbaSMI4xEe6GhLbWVN8dOg" name="no" source="_gVlGMI4wEe6GhLbWVN8dOg" target="_17yZoI4wEe6GhLbWVN8dOg"/>
               <transition xmi:type="uml:Transition" xmi:id="_W7sJMI4xEe6GhLbWVN8dOg" source="_phNIQI4wEe6GhLbWVN8dOg" target="_U_uLwI4xEe6GhLbWVN8dOg"/>
-              <transition xmi:type="uml:Transition" xmi:id="_XW43cI4xEe6GhLbWVN8dOg" source="_17yZoI4wEe6GhLbWVN8dOg" target="_U_uLwI4xEe6GhLbWVN8dOg"/>
-              <transition xmi:type="uml:Transition" xmi:id="_Y_zWAI4xEe6GhLbWVN8dOg" source="_U_uLwI4xEe6GhLbWVN8dOg" target="_cHTkYI4vEe6GhLbWVN8dOg"/>
-              <transition xmi:type="uml:Transition" xmi:id="_-FdaAI4xEe6GhLbWVN8dOg" source="_cHTkYI4vEe6GhLbWVN8dOg" target="_9XnckI4xEe6GhLbWVN8dOg"/>
-              <transition xmi:type="uml:Transition" xmi:id="_BFjUoI43Ee6o5KCN1LGczg" source="_U_uLwI4xEe6GhLbWVN8dOg" target="_MSYg0I40Ee6GhLbWVN8dOg"/>
+              <transition xmi:type="uml:Transition" xmi:id="_Y_zWAI4xEe6GhLbWVN8dOg" source="_6BGygI7bEe6W26qYkado_g" target="_cHTkYI4vEe6GhLbWVN8dOg"/>
+              <transition xmi:type="uml:Transition" xmi:id="_rNBlEI7ZEe6W26qYkado_g" source="_cHTkYI4vEe6GhLbWVN8dOg" target="_ppadQI7ZEe6W26qYkado_g"/>
+              <transition xmi:type="uml:Transition" xmi:id="_H1YFkI7aEe6W26qYkado_g" name="state = TRUE" source="_8sj54I7gEe6W26qYkado_g" target="_FbVFAI7aEe6W26qYkado_g"/>
+              <transition xmi:type="uml:Transition" xmi:id="_ByTd8I7cEe6W26qYkado_g" source="_U_uLwI4xEe6GhLbWVN8dOg" target="_6BGygI7bEe6W26qYkado_g"/>
+              <transition xmi:type="uml:Transition" xmi:id="_WCigII7gEe6W26qYkado_g" name="yes" source="_gVlGMI4wEe6GhLbWVN8dOg" target="_phNIQI4wEe6GhLbWVN8dOg"/>
+              <transition xmi:type="uml:Transition" xmi:id="_aCEQwI7gEe6W26qYkado_g" source="_UlDT4I4vEe6GhLbWVN8dOg" target="_ZA8yAI7gEe6W26qYkado_g"/>
+              <transition xmi:type="uml:Transition" xmi:id="_awmxwI7gEe6W26qYkado_g" source="_ZA8yAI7gEe6W26qYkado_g" target="_gVlGMI4wEe6GhLbWVN8dOg"/>
+              <transition xmi:type="uml:Transition" xmi:id="_dx1HEI7gEe6W26qYkado_g" name="no" source="_gVlGMI4wEe6GhLbWVN8dOg" target="_coXkoI7gEe6W26qYkado_g"/>
+              <transition xmi:type="uml:Transition" xmi:id="_efF1sI7gEe6W26qYkado_g" source="_coXkoI7gEe6W26qYkado_g" target="_U_uLwI4xEe6GhLbWVN8dOg"/>
+              <transition xmi:type="uml:Transition" xmi:id="_-1YAgI7gEe6W26qYkado_g" source="_6BGygI7bEe6W26qYkado_g" target="_8sj54I7gEe6W26qYkado_g"/>
               <subvertex xmi:type="uml:Pseudostate" xmi:id="_UlDT4I4vEe6GhLbWVN8dOg" name="Initial"/>
               <subvertex xmi:type="uml:Pseudostate" xmi:id="_cHTkYI4vEe6GhLbWVN8dOg" name="ExitPointAB" kind="exitPoint"/>
-              <subvertex xmi:type="uml:State" xmi:id="_ItL4kI4wEe6GhLbWVN8dOg" name="E10 read_config()"/>
               <subvertex xmi:type="uml:Pseudostate" xmi:id="_gVlGMI4wEe6GhLbWVN8dOg" name="Is there any config?" kind="choice"/>
               <subvertex xmi:type="uml:State" xmi:id="_phNIQI4wEe6GhLbWVN8dOg" name="E20 load_config()"/>
-              <subvertex xmi:type="uml:State" xmi:id="_17yZoI4wEe6GhLbWVN8dOg" name="E30 use_default_values()"/>
               <subvertex xmi:type="uml:State" xmi:id="_U_uLwI4xEe6GhLbWVN8dOg" name="E40 notify_pc()"/>
-            </region>
-          </packagedElement>
-          <packagedElement xmi:type="uml:StateMachine" xmi:id="_epvkkI4yEe6GhLbWVN8dOg" name="SMA_COMP">
-            <region xmi:type="uml:Region" xmi:id="_O7KWYI4zEe6GhLbWVN8dOg" name="RegionD">
-              <subvertex xmi:type="uml:Pseudostate" xmi:id="_MSYg0I40Ee6GhLbWVN8dOg" name="EntryPointON/OFF" kind="entryPoint"/>
-              <subvertex xmi:type="uml:Pseudostate" xmi:id="_OKJTsI40Ee6GhLbWVN8dOg" name="ExitPointD" kind="exitPoint"/>
+              <subvertex xmi:type="uml:Pseudostate" xmi:id="_6BGygI7bEe6W26qYkado_g" name="ChangePCstate/continue" kind="junction"/>
+              <subvertex xmi:type="uml:State" xmi:id="_ZA8yAI7gEe6W26qYkado_g" name="E10 read_config()"/>
+              <subvertex xmi:type="uml:State" xmi:id="_coXkoI7gEe6W26qYkado_g" name="E30 use_default_values()"/>
             </region>
           </packagedElement>
           <packagedElement xmi:type="uml:StateMachine" xmi:id="_5YHkUI41Ee6o5KCN1LGczg" name="PowerOff">
@@ -110,13 +101,77 @@
             <region xmi:type="uml:Region" xmi:id="_5YHkYo41Ee6o5KCN1LGczg" name="RegionA">
               <transition xmi:type="uml:Transition" xmi:id="_b-KLQI42Ee6o5KCN1LGczg" source="_HfThcI42Ee6o5KCN1LGczg" target="_US_2YI42Ee6o5KCN1LGczg"/>
               <transition xmi:type="uml:Transition" xmi:id="_mKL6YI42Ee6o5KCN1LGczg" source="_US_2YI42Ee6o5KCN1LGczg" target="_kIJKII42Ee6o5KCN1LGczg"/>
-              <transition xmi:type="uml:Transition" xmi:id="_-UY0kI42Ee6o5KCN1LGczg" source="_kIJKII42Ee6o5KCN1LGczg" target="_nNWnkI42Ee6o5KCN1LGczg"/>
-              <transition xmi:type="uml:Transition" xmi:id="__VS38I42Ee6o5KCN1LGczg" source="_nNWnkI42Ee6o5KCN1LGczg" target="_MSYg0I40Ee6GhLbWVN8dOg"/>
-              <transition xmi:type="uml:Transition" xmi:id="_HrdRoI43Ee6o5KCN1LGczg" source="_kIJKII42Ee6o5KCN1LGczg" target="_RbsSEI42Ee6o5KCN1LGczg"/>
+              <transition xmi:type="uml:Transition" xmi:id="_-UY0kI42Ee6o5KCN1LGczg" source="_ye3JEI7bEe6W26qYkado_g" target="_nNWnkI42Ee6o5KCN1LGczg"/>
+              <transition xmi:type="uml:Transition" xmi:id="_HrdRoI43Ee6o5KCN1LGczg" source="_ye3JEI7bEe6W26qYkado_g" target="_RbsSEI42Ee6o5KCN1LGczg"/>
+              <transition xmi:type="uml:Transition" xmi:id="_HM7lgI7aEe6W26qYkado_g" name="state = FALSE" source="_nNWnkI42Ee6o5KCN1LGczg" target="_FbVFAI7aEe6W26qYkado_g"/>
+              <transition xmi:type="uml:Transition" xmi:id="_0K4mAI7bEe6W26qYkado_g" source="_kIJKII42Ee6o5KCN1LGczg" target="_ye3JEI7bEe6W26qYkado_g"/>
               <subvertex xmi:type="uml:Pseudostate" xmi:id="_HfThcI42Ee6o5KCN1LGczg" name="EntryPointBC" kind="entryPoint"/>
               <subvertex xmi:type="uml:FinalState" xmi:id="_RbsSEI42Ee6o5KCN1LGczg" name="FinalState"/>
               <subvertex xmi:type="uml:State" xmi:id="_US_2YI42Ee6o5KCN1LGczg" name="AP-10 save_config()"/>
               <subvertex xmi:type="uml:State" xmi:id="_kIJKII42Ee6o5KCN1LGczg" name="AP-20 notify_pc()"/>
+              <subvertex xmi:type="uml:Pseudostate" xmi:id="_ye3JEI7bEe6W26qYkado_g" name="ChangePCstate/PowerOff" kind="junction"/>
+            </region>
+          </packagedElement>
+          <packagedElement xmi:type="uml:StateMachine" xmi:id="_jIDCAI7ZEe6W26qYkado_g" name="Behaviour">
+            <region xmi:type="uml:Region" xmi:id="_jIDCAo7ZEe6W26qYkado_g" name="RegionB">
+              <transition xmi:type="uml:Transition" xmi:id="_g_e2MI7dEe6W26qYkado_g" source="_ppadQI7ZEe6W26qYkado_g" target="_dux6cI7dEe6W26qYkado_g"/>
+              <transition xmi:type="uml:Transition" xmi:id="_zN7joI7dEe6W26qYkado_g" source="_w6HG4I7dEe6W26qYkado_g" target="_1BxAII7aEe6W26qYkado_g"/>
+              <transition xmi:type="uml:Transition" xmi:id="_9BcFEI7dEe6W26qYkado_g" name="if(timePassed = 5000)" source="_dux6cI7dEe6W26qYkado_g" target="_r_HzkI7dEe6W26qYkado_g"/>
+              <transition xmi:type="uml:Transition" xmi:id="_DUNqsI7eEe6W26qYkado_g" source="_r_HzkI7dEe6W26qYkado_g" target="_5w79oI7dEe6W26qYkado_g"/>
+              <transition xmi:type="uml:Transition" xmi:id="_GCsqMI7eEe6W26qYkado_g" source="_5w79oI7dEe6W26qYkado_g" target="_w6HG4I7dEe6W26qYkado_g"/>
+              <transition xmi:type="uml:Transition" xmi:id="_Hv7BAI7eEe6W26qYkado_g" name="if(timePassed = 10)" source="_dux6cI7dEe6W26qYkado_g" target="_q2nTYI7dEe6W26qYkado_g"/>
+              <transition xmi:type="uml:Transition" xmi:id="_O_zvII7eEe6W26qYkado_g" source="_q2nTYI7dEe6W26qYkado_g" target="_KzW80I7eEe6W26qYkado_g"/>
+              <transition xmi:type="uml:Transition" xmi:id="_QjUJQI7eEe6W26qYkado_g" source="_5w79oI7dEe6W26qYkado_g" target="_dux6cI7dEe6W26qYkado_g"/>
+              <transition xmi:type="uml:Transition" xmi:id="_YwtBcI7eEe6W26qYkado_g" source="_KzW80I7eEe6W26qYkado_g" target="_dux6cI7dEe6W26qYkado_g"/>
+              <transition xmi:type="uml:Transition" xmi:id="_e2Ay0I7eEe6W26qYkado_g" name="if(timePassed = 1000)" source="_dux6cI7dEe6W26qYkado_g" target="_do3DMI7eEe6W26qYkado_g"/>
+              <transition xmi:type="uml:Transition" xmi:id="_h-4BMI7eEe6W26qYkado_g" source="_do3DMI7eEe6W26qYkado_g" target="_5w79oI7dEe6W26qYkado_g"/>
+              <transition xmi:type="uml:Transition" xmi:id="_8GBJMI7eEe6W26qYkado_g" source="_sR9M0I7ZEe6W26qYkado_g" target="_HfThcI42Ee6o5KCN1LGczg"/>
+              <transition xmi:type="uml:Transition" xmi:id="_X-kkcI7fEe6W26qYkado_g" source="_WaBogI7fEe6W26qYkado_g" target="_PS1jYI7fEe6W26qYkado_g"/>
+              <transition xmi:type="uml:Transition" xmi:id="_ZbKeQI7fEe6W26qYkado_g" source="_UVryMI7fEe6W26qYkado_g" target="_RhEVgI7fEe6W26qYkado_g"/>
+              <transition xmi:type="uml:Transition" xmi:id="_muCCgI7fEe6W26qYkado_g" name="power off signal?" source="_dux6cI7dEe6W26qYkado_g" target="_sR9M0I7ZEe6W26qYkado_g"/>
+              <transition xmi:type="uml:Transition" xmi:id="_Mr-ZYI7gEe6W26qYkado_g" source="_RhEVgI7fEe6W26qYkado_g" target="_K1EiII7gEe6W26qYkado_g"/>
+              <transition xmi:type="uml:Transition" xmi:id="_N1ci4I7gEe6W26qYkado_g" source="_PS1jYI7fEe6W26qYkado_g" target="_K1EiII7gEe6W26qYkado_g"/>
+              <subvertex xmi:type="uml:Pseudostate" xmi:id="_ppadQI7ZEe6W26qYkado_g" name="EntryPointB" kind="entryPoint"/>
+              <subvertex xmi:type="uml:Pseudostate" xmi:id="_sR9M0I7ZEe6W26qYkado_g" name="ExitPointB" kind="exitPoint"/>
+              <subvertex xmi:type="uml:State" xmi:id="_dux6cI7dEe6W26qYkado_g" name="B-10 idle()/sleep()"/>
+              <subvertex xmi:type="uml:State" xmi:id="_q2nTYI7dEe6W26qYkado_g" name="read_noise()"/>
+              <subvertex xmi:type="uml:State" xmi:id="_r_HzkI7dEe6W26qYkado_g" name="read_sensors()"/>
+              <subvertex xmi:type="uml:State" xmi:id="_5w79oI7dEe6W26qYkado_g" name="send_info()"/>
+              <subvertex xmi:type="uml:State" xmi:id="_KzW80I7eEe6W26qYkado_g" name="save_noise_in_vector()"/>
+              <subvertex xmi:type="uml:State" xmi:id="_do3DMI7eEe6W26qYkado_g" name="send_noise()"/>
+              <subvertex xmi:type="uml:State" xmi:id="_PS1jYI7fEe6W26qYkado_g" name="change_color_LEDs()"/>
+              <subvertex xmi:type="uml:State" xmi:id="_RhEVgI7fEe6W26qYkado_g" name="change_fan_speed()"/>
+              <subvertex xmi:type="uml:Pseudostate" xmi:id="_w6HG4I7dEe6W26qYkado_g" name="ExitPointSensors" kind="exitPoint"/>
+              <subvertex xmi:type="uml:Pseudostate" xmi:id="_UVryMI7fEe6W26qYkado_g" name="EntryPointFAN" kind="entryPoint"/>
+              <subvertex xmi:type="uml:Pseudostate" xmi:id="_WaBogI7fEe6W26qYkado_g" name="EntryPointLED" kind="entryPoint"/>
+              <subvertex xmi:type="uml:FinalState" xmi:id="_K1EiII7gEe6W26qYkado_g" name="FinalStateCommand"/>
+            </region>
+          </packagedElement>
+          <packagedElement xmi:type="uml:StateMachine" xmi:id="__NTcgI7ZEe6W26qYkado_g" name="SMA_COMP">
+            <region xmi:type="uml:Region" xmi:id="__NTcgo7ZEe6W26qYkado_g" name="RegionD">
+              <transition xmi:type="uml:Transition" xmi:id="_TgsdMI7aEe6W26qYkado_g" name="COMP_state = state" source="_FbVFAI7aEe6W26qYkado_g" target="_P6M3oI7aEe6W26qYkado_g"/>
+              <transition xmi:type="uml:Transition" xmi:id="_DKAtMI7bEe6W26qYkado_g" name="if(COMP_state == TRUE)" source="_1BxAII7aEe6W26qYkado_g" target="_90YFQI7aEe6W26qYkado_g"/>
+              <transition xmi:type="uml:Transition" xmi:id="_uo8K8I7cEe6W26qYkado_g" source="_oWYnwI7cEe6W26qYkado_g" target="_rgwSAI7cEe6W26qYkado_g"/>
+              <transition xmi:type="uml:Transition" xmi:id="_vtD6YI7cEe6W26qYkado_g" source="_rgwSAI7cEe6W26qYkado_g" target="_eA2-YI7cEe6W26qYkado_g"/>
+              <transition xmi:type="uml:Transition" xmi:id="_wJFvEI7cEe6W26qYkado_g" source="_rgwSAI7cEe6W26qYkado_g" target="_TbsWgI7cEe6W26qYkado_g"/>
+              <transition xmi:type="uml:Transition" xmi:id="_8JZfQI7cEe6W26qYkado_g" source="_eA2-YI7cEe6W26qYkado_g" target="_565AUI7cEe6W26qYkado_g"/>
+              <transition xmi:type="uml:Transition" xmi:id="_9dDfgI7cEe6W26qYkado_g" source="_TbsWgI7cEe6W26qYkado_g" target="_5Bdd8I7cEe6W26qYkado_g"/>
+              <transition xmi:type="uml:Transition" xmi:id="_dWdPII7fEe6W26qYkado_g" source="_565AUI7cEe6W26qYkado_g" target="_UVryMI7fEe6W26qYkado_g"/>
+              <transition xmi:type="uml:Transition" xmi:id="_gvXEoI7fEe6W26qYkado_g" source="_5Bdd8I7cEe6W26qYkado_g" target="_WaBogI7fEe6W26qYkado_g"/>
+              <transition xmi:type="uml:Transition" xmi:id="_6OULQI7fEe6W26qYkado_g" source="_P6M3oI7aEe6W26qYkado_g" target="_1dzpoI7fEe6W26qYkado_g"/>
+              <transition xmi:type="uml:Transition" xmi:id="_Ay6gsI7gEe6W26qYkado_g" source="_90YFQI7aEe6W26qYkado_g" target="_-zfmoI7fEe6W26qYkado_g"/>
+              <subvertex xmi:type="uml:Pseudostate" xmi:id="_FbVFAI7aEe6W26qYkado_g" name="EntryPointON/OFF" kind="entryPoint"/>
+              <subvertex xmi:type="uml:State" xmi:id="_P6M3oI7aEe6W26qYkado_g" name="PC-10 state"/>
+              <subvertex xmi:type="uml:State" xmi:id="_90YFQI7aEe6W26qYkado_g" name="PC-20 show_variables()"/>
+              <subvertex xmi:type="uml:State" xmi:id="_TbsWgI7cEe6W26qYkado_g" name="PC-30 change_RGB()"/>
+              <subvertex xmi:type="uml:State" xmi:id="_eA2-YI7cEe6W26qYkado_g" name="PC-40 fan_speed()"/>
+              <subvertex xmi:type="uml:Pseudostate" xmi:id="_rgwSAI7cEe6W26qYkado_g" name="LED/FAN command?" kind="choice"/>
+              <subvertex xmi:type="uml:Pseudostate" xmi:id="_1BxAII7aEe6W26qYkado_g" name="EntryPointSensors" kind="entryPoint"/>
+              <subvertex xmi:type="uml:Pseudostate" xmi:id="_oWYnwI7cEe6W26qYkado_g" name="KeyboardInterrupt" kind="entryPoint"/>
+              <subvertex xmi:type="uml:Pseudostate" xmi:id="_5Bdd8I7cEe6W26qYkado_g" name="ExitPointLED" kind="exitPoint"/>
+              <subvertex xmi:type="uml:Pseudostate" xmi:id="_565AUI7cEe6W26qYkado_g" name="ExitPointFAN" kind="exitPoint"/>
+              <subvertex xmi:type="uml:FinalState" xmi:id="_1dzpoI7fEe6W26qYkado_g" name="FinalStateCOMP"/>
+              <subvertex xmi:type="uml:FinalState" xmi:id="_-zfmoI7fEe6W26qYkado_g" name="FinalStateVars"/>
             </region>
           </packagedElement>
         </packagedElement>

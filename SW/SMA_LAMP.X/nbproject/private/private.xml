@@ -3,13 +3,12 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/ciruu/Documentos/SE/SMA_LAMP/SW/SMA_LAMP.X/main.c</file>
-            <file>file:/home/ciruu/Documentos/SE/SMA_LAMP/SW/SMA_LAMP.X/SPI/spi-master-v1.c</file>
+            <file>file:/home/ciruu/Documentos/SE/SMA_LAMP/SW/SMA_LAMP.X/monitor.c</file>
             <file>file:/home/ciruu/Documentos/SE/SMA_LAMP/SW/SMA_LAMP.X/Init/initall.c</file>
-            <file>file:/home/ciruu/Documentos/SE/SMA_LAMP/SW/SMA_LAMP.X/SPI/poweron.c</file>
-            <file>file:/home/ciruu/Documentos/SE/SMA_LAMP/SW/SMA_LAMP.X/SPI/poweroff.c</file>
-            <file>file:/home/ciruu/Documentos/SE/SMA_LAMP/SW/SMA_LAMP.X/SPI/monitor.c</file>
-            <file>file:/home/ciruu/Documentos/SE/SMA_LAMP/SW/SMA_LAMP.X/SPI/action.c</file>
+            <file>file:/home/ciruu/Documentos/SE/SMA_LAMP/SW/SMA_LAMP.X/poweron.c</file>
+            <file>file:/home/ciruu/Documentos/SE/SMA_LAMP/SW/SMA_LAMP.X/SPI/spi-master-v1.c</file>
+            <file>file:/home/ciruu/Documentos/SE/SMA_LAMP/SW/SMA_LAMP.X/main.c</file>
+            <file>file:/home/ciruu/Documentos/SE/SMA_LAMP/SW/SMA_LAMP.X/action.c</file>
         </group>
     </open-files>
 </project-private>
