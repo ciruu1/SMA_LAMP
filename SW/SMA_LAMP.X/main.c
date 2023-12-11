@@ -5,7 +5,7 @@
  * Created on 23 de noviembre de 2023, 10:22
  */
 
-// TODO cambiar los nombres del diagrama de alto nivel de Español a Inglés
+// TODO cambiar los nombres del diagrama de alto nivel de Espaï¿½ol a Inglï¿½s
 
 
 #pragma config CPD = OFF, BOREN = OFF, IESO = OFF, DEBUG = OFF, FOSC = HS
@@ -30,8 +30,8 @@ int maxNoise = 0;
 
 void putch(char data)
 {
-    while (!TXIF);  // Espera hasta que el registro de transmisión esté listo para enviar
-        TXREG = data;  // Carga el carácter en el registro de transmisión
+    while (!TXIF);  // Espera hasta que el registro de transmisiï¿½n estï¿½ listo para enviar
+        TXREG = data;  // Carga el carï¿½cter en el registro de transmisiï¿½n
 }
 
 int readADC(int channel)
@@ -101,7 +101,7 @@ void main(void)
     noiseCounterValues = 0;
     while(1)
     {
-        
+        putch("Bienvenido a Lampara inteligente!!"); //this will be send it by UART since putch was redefined.
     }
     return;
 }

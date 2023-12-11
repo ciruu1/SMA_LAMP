@@ -5,3 +5,17 @@
  * recibir_comandos_pc()
  * leer_sensores()
  */
+
+#include <xc.h>
+#include <stdio.h>
+
+void recibir_comandos_pc() {
+    if (PIR1bits.RCIF) { 
+        char received_char = RCREG;  
+
+        if (received_char == 'R' || received_char == 'G' || received_char == 'B' || received_char == 'L' || received_char == 'S') {
+        }//this only check if some commands come by UART.
+        
+        PIR1bits.RCIF = 0;
+    }
+}
