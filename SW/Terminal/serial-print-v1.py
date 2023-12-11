@@ -14,7 +14,7 @@ import serial
 # Create serial instance
 
 ser = serial.Serial(
-port = "/dev/ttyUSB0", 
+port = "COM6", 
 baudrate = 9600,
 bytesize=serial.EIGHTBITS,
 parity= serial.PARITY_NONE,
