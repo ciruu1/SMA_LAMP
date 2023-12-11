@@ -134,13 +134,13 @@
               <subvertex xmi:type="uml:Pseudostate" xmi:id="_ppadQI7ZEe6W26qYkado_g" name="EntryPointB" kind="entryPoint"/>
               <subvertex xmi:type="uml:Pseudostate" xmi:id="_sR9M0I7ZEe6W26qYkado_g" name="ExitPointB" kind="exitPoint"/>
               <subvertex xmi:type="uml:State" xmi:id="_dux6cI7dEe6W26qYkado_g" name="B-10 idle()/sleep()"/>
-              <subvertex xmi:type="uml:State" xmi:id="_q2nTYI7dEe6W26qYkado_g" name="read_noise()"/>
-              <subvertex xmi:type="uml:State" xmi:id="_r_HzkI7dEe6W26qYkado_g" name="read_sensors()"/>
-              <subvertex xmi:type="uml:State" xmi:id="_5w79oI7dEe6W26qYkado_g" name="send_info()"/>
-              <subvertex xmi:type="uml:State" xmi:id="_KzW80I7eEe6W26qYkado_g" name="save_noise_in_vector()"/>
-              <subvertex xmi:type="uml:State" xmi:id="_do3DMI7eEe6W26qYkado_g" name="send_noise()"/>
-              <subvertex xmi:type="uml:State" xmi:id="_PS1jYI7fEe6W26qYkado_g" name="change_color_LEDs()"/>
-              <subvertex xmi:type="uml:State" xmi:id="_RhEVgI7fEe6W26qYkado_g" name="change_fan_speed()"/>
+              <subvertex xmi:type="uml:State" xmi:id="_q2nTYI7dEe6W26qYkado_g" name="B-20 read_noise()"/>
+              <subvertex xmi:type="uml:State" xmi:id="_r_HzkI7dEe6W26qYkado_g" name="B-50 read_sensors()"/>
+              <subvertex xmi:type="uml:State" xmi:id="_5w79oI7dEe6W26qYkado_g" name="B-60 send_info()"/>
+              <subvertex xmi:type="uml:State" xmi:id="_KzW80I7eEe6W26qYkado_g" name="B-30 save_noise_in_vector()"/>
+              <subvertex xmi:type="uml:State" xmi:id="_do3DMI7eEe6W26qYkado_g" name="B-40 send_noise()"/>
+              <subvertex xmi:type="uml:State" xmi:id="_PS1jYI7fEe6W26qYkado_g" name="B-70 change_color_LEDs()"/>
+              <subvertex xmi:type="uml:State" xmi:id="_RhEVgI7fEe6W26qYkado_g" name="B-80 change_fan_speed()"/>
               <subvertex xmi:type="uml:Pseudostate" xmi:id="_w6HG4I7dEe6W26qYkado_g" name="ExitPointSensors" kind="exitPoint"/>
               <subvertex xmi:type="uml:Pseudostate" xmi:id="_UVryMI7fEe6W26qYkado_g" name="EntryPointFAN" kind="entryPoint"/>
               <subvertex xmi:type="uml:Pseudostate" xmi:id="_WaBogI7fEe6W26qYkado_g" name="EntryPointLED" kind="entryPoint"/>
