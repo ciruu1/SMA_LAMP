@@ -19,12 +19,14 @@ void init_uart(void)
     RCSTAbits.RX9 = 0; /* RX 8 data bit */
 
     PIE1bits.TXIE = 0; /* Disable TX interrupt */
-    PIE1bits.RCIE = 0; /* Disable RX interrupt */
+    PIE1bits.RCIE = 1; /* Enable RX interrupt */
 
     RCSTAbits.SPEN = 1; /* Serial port enable */
 
     TXSTAbits.TXEN = 0; /* Reset transmitter */
     TXSTAbits.TXEN = 1; /* Enable transmitter */
+    
+    RCSTAbits.CREN = 1;         // Habilita la recepción continua
 
 }
 

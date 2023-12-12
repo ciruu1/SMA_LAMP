@@ -157,6 +157,10 @@
         <property key="program-the-device-with-default-config-words" value="false"/>
         <property key="remove-unused-sections" value="true"/>
       </HI-TECH-LINK>
+      <item path="Init/initall.c" ex="true" overriding="false">
+      </item>
+      <item path="SPI/spi-master-v1.c" ex="true" overriding="false">
+      </item>
       <Simulator>
         <property key="codecoverage.enabled" value="Disable"/>
         <property key="codecoverage.enableoutputtofile" value="false"/>
@@ -1117,6 +1121,14 @@
         <property key="user-pack-device-support" value=""/>
         <property key="wpo-lto" value="false"/>
       </XC8-config-global>
+      <item path="action.c" ex="true" overriding="false">
+      </item>
+      <item path="monitor.c" ex="true" overriding="false">
+      </item>
+      <item path="poweroff.c" ex="true" overriding="false">
+      </item>
+      <item path="poweron.c" ex="true" overriding="false">
+      </item>
     </conf>
   </confs>
 </configurationDescriptor>
