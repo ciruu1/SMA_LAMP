@@ -5,7 +5,7 @@
  * Created on 23 de noviembre de 2023, 10:22
  */
 
-// TODO cambiar los nombres del diagrama de alto nivel de Español a Inglés
+// TODO cambiar los nombres del diagrama de alto nivel de Espaï¿½ol a Inglï¿½s
 
 
 #pragma config CPD = OFF, BOREN = OFF, IESO = OFF, DEBUG = OFF, FOSC = HS
@@ -131,9 +131,10 @@ void main(void)
     counterRuido1seg = 0;
     counter5seg = 0;
     noiseCounterValues = 0;
+    printf("Bienvenido a Lampara inteligente!!"); //this will be send it by UART since putch was redefined.
     while (1)
     {
-
+        
     }
     return;
 }
