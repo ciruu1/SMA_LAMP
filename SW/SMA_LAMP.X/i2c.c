@@ -16,6 +16,18 @@ void I2C_Write(unsigned char data) {
     while (BF);     // Esperar hasta que se complete la transmisión
 }
 
+void I2C_Ack() {
+    ACKDT = 0;  // Establecer ACK para la próxima transmisión
+    ACKEN = 1;  // Habilitar el bit ACK para enviar ACK
+    while (ACKEN);  // Esperar hasta que se complete la transmisión del ACK
+}
+
+void I2C_Nack() {
+    ACKDT = 1;  // Establecer NACK para la próxima transmisión
+    ACKEN = 1;  // Habilitar el bit ACK para enviar NACK
+    while (ACKEN);  // Esperar hasta que se complete la transmisión del NACK
+}
+
 unsigned char I2C_Read() {
     RCEN = 1;       // Habilitar la recepción
     while (!BF);    // Esperar hasta que se complete la recepción
