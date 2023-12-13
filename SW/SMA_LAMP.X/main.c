@@ -25,10 +25,15 @@
 #define I2C_ADDRESS 0x5A   // Dirección I2C del sensor iAQ-Core (7 bits, sin incluir el bit de lectura/escritura)
 #define I2C_READ_CMD 0xB5  // Comando de lectura
 
+// Definiciones para la configuración del I2C y el sensor VEML7700
+#define VEML7700_ADDRESS_WRITE 0x20  // Dirección I2C del sensor VEML7700 en modo escritura
+#define VEML7700_ADDRESS_READ  0x21  // Dirección I2C del sensor VEML7700 en modo lectura
+#define VEML7700_COMMAND_CODE  0x00  // Código de comando para lectura de Lux
+
+
 int counter;
 int counterRuido10ms, counterRuido1seg, counter5seg; // 2 ticks, 200 ticks, 1000 ticks
-int uart_num;
-int NoiseValue, HumValue, TempValue;
+unsigned int NoiseValue, HumValue, TempValue;
 char noiseValues[10];
 int noiseCounterValues; // 0..9
 int maxNoise = 0;
@@ -41,6 +46,30 @@ int endString = 0;
 // I2C
 
 unsigned char co2Data[3]; // prediction0, prediction1, status
+
+
+int VEML7700_ReadLux() {
+    unsigned int luxValue = 0;
+
+    // Comunicarse con el sensor VEML7700
+    I2C_Start();                  // Iniciar condición de inicio
+    I2C_Write(VEML7700_ADDRESS_WRITE);  // Enviar la dirección del dispositivo con el bit de escritura
+    I2C_Write(VEML7700_COMMAND_CODE);   // Enviar el código de comando para lectura de Lux
+    I2C_Stop();                   // Enviar condición de parada
+
+    // Leer los dos bytes de Lux del sensor VEML7700
+    I2C_Start();                  // Iniciar condición de inicio
+    I2C_Write(VEML7700_ADDRESS_READ);   // Enviar la dirección del dispositivo con el bit de lectura
+
+    luxValue = I2C_Read() << 8;  // Leer el byte alto de Lux
+    I2C_Ack();                   // Enviar ACK para indicar que se espera otro byte
+
+    luxValue |= I2C_Read();      // Leer el byte bajo de Lux
+    I2C_Nack();                  // Enviar NACK para indicar que no se esperan más bytes
+    I2C_Stop();                  // Enviar condición de parada
+
+    return luxValue;
+}
 
 void read_CO2()
 {
@@ -69,7 +98,7 @@ void send_CO2()
 {
     if(co2Data[2] == 0x00) // OK
     {
-        printf("%u", (co2Data[0] << 7) | co2Data[1]);
+        printf("PPM %u", (co2Data[0] << 7) | co2Data[1]);
     }
     else if(co2Data[2] == 0x10) // RUNIN
     {
@@ -148,6 +177,7 @@ void __interrupt() int_routine(void)
             // I2C
             read_CO2();
             send_CO2();
+            printf("LUX %u", VEML7700_ReadLux());
             // Leer Sensores
         }
     }
