@@ -18,7 +18,12 @@
 
 // With this library we configure the main settings on the MCU
 #include "Init/initall.c"
-//#include "action.c"
+// I2C lib
+#include "i2c.c"
+
+// I2C
+#define I2C_ADDRESS 0x5A   // Dirección I2C del sensor iAQ-Core (7 bits, sin incluir el bit de lectura/escritura)
+#define I2C_READ_CMD 0xB5  // Comando de lectura
 
 int counter;
 int counterRuido10ms, counterRuido1seg, counter5seg; // 2 ticks, 200 ticks, 1000 ticks
@@ -32,6 +37,57 @@ int maxNoise = 0;
 char receivedString[20];
 int currentIndex = 0;
 int endString = 0;
+
+// I2C
+
+unsigned char co2Data[3]; // prediction0, prediction1, status
+
+void read_CO2()
+{
+    // Comunicarse con el sensor iAQ-Core
+    I2C_Start();          // Iniciar condición de inicio
+    I2C_Write(I2C_ADDRESS << 1);  // Enviar la dirección del dispositivo con el bit de escritura
+    I2C_Write(I2C_READ_CMD);      // Enviar el comando de lectura
+    I2C_Stop();           // Enviar condición de parada
+
+    // Leer datos del sensor iAQ-Core
+    I2C_Start();          // Iniciar condición de inicio
+    I2C_Write((I2C_ADDRESS << 1) | 0x01);  // Enviar la dirección del dispositivo con el bit de lectura
+    
+    unsigned char co2Data[0] = I2C_Read();  // Leer primer byte de predicción
+    I2C_Ack();                                   // Enviar ACK para indicar que se espera otro byte
+
+    unsigned char co2Data[1] = I2C_Read();  // Leer segundo byte de predicción
+    I2C_Ack();                                   // Enviar ACK para indicar que se espera otro byte
+
+    unsigned char co2Data[2] = I2C_Read();       // Leer byte de estado
+    I2C_Nack();                                 // Enviar NACK para indicar que no se esperan más bytes
+    I2C_Stop();           // Enviar condición de parada
+}
+
+void send_CO2()
+{
+    if(co2Data[2] == 0x00) // OK
+    {
+        printf("%u", (co2Data[0] << 7) | co2Data[1]);
+    }
+    else if(co2Data[2] == 0x10) // RUNIN
+    {
+        printf("WARMUP");
+    }
+    else if(co2Data[2] == 0x01) // BUSY
+    {
+        printf("BUSY");
+    }
+    else if(co2Data[2] == 0x80) // ERROR
+    {
+        printf("ERROR");
+    }
+    else // UNKOWN
+    {
+        printf("UNKOWN");
+    }
+}
 
 void putch(char data)
 {
@@ -90,7 +146,8 @@ void __interrupt() int_routine(void)
             printf("HUMIDITY %u", HumValue);
             printf("TEMPERATURE %u", TempValue);
             // I2C
-
+            read_CO2();
+            send_CO2();
             // Leer Sensores
         }
     }

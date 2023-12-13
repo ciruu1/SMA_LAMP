@@ -1,6 +1,8 @@
 #include <xc.h>
 #include <proc/pic16f886.h>
 
+#define _XTAL_FREQ 20000000
+
 /*
  Configure USART
  */
@@ -25,8 +27,8 @@ void init_uart(void)
 
     TXSTAbits.TXEN = 0; /* Reset transmitter */
     TXSTAbits.TXEN = 1; /* Enable transmitter */
-    
-    RCSTAbits.CREN = 1;         // Habilita la recepción continua
+
+    RCSTAbits.CREN = 1; // Habilita la recepción continua
 
 }
 
@@ -49,13 +51,24 @@ void init_adc(void)
 
 void init_timer()
 {
-  OPTION_REGbits.T0CS = 0;
-  OPTION_REGbits.PSA = 0;
-  OPTION_REGbits.PS = 0b111; // Fosc/32
-  INTCONbits.T0IE = 1; // Habilita las interrupciones del timer0
-  INTCONbits.T0IF = 0;
+    OPTION_REGbits.T0CS = 0;
+    OPTION_REGbits.PSA = 0;
+    OPTION_REGbits.PS = 0b111; // Fosc/32
+    INTCONbits.T0IE = 1; // Habilita las interrupciones del timer0
+    INTCONbits.T0IF = 0;
 
-  TMR0 = 159;  // Cada 5 mseg   256-97  (5*10^6/ 256)*0.005 = 97.6 
+    TMR0 = 159; // Cada 5 mseg   256-97  (5*10^6/ 256)*0.005 = 97.6 
+}
+
+void init_I2C()
+{
+    // Configuración del módulo I2C
+    SSPCON = 0b00101000; // Habilitar el modo I2C Master, velocidad estándar (100kHz)
+    SSPADD = ((_XTAL_FREQ / 4) / 100000) - 1; // Calcular el valor del registro de divisor para 100kHz
+    SSPSTAT = 0;
+    
+    TRISC3 = 1;  // Configurar el pin RC3 como entrada para SDA
+    TRISC4 = 1;  // Configurar el pin RC4 como entrada para SCL
 }
 
 void init(void)
@@ -65,5 +78,5 @@ void init(void)
     init_timer();
     init_uart();
     init_adc();
-    
+    init_I2C();
 }
