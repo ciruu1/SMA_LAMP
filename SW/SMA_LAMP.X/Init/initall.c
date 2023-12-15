@@ -49,7 +49,7 @@ void init_adc(void)
 
 }
 
-void init_timer()
+void init_timer0()
 {
     OPTION_REGbits.T0CS = 0;
     OPTION_REGbits.PSA = 0;
@@ -71,12 +71,18 @@ void init_I2C()
     TRISC4 = 1;  // Configurar el pin RC4 como entrada para SCL
 }
 
+void init_SPI() {
+    TRISC0 = 0; // SCK como salida (reloj)
+    TRISC1 = 0; // SDO como salida (Maestro manda esclavo)
+}
+
 void init(void)
 {
     OSCCON = 0b00001000;
     INTCONbits.GIE = 1;
-    init_timer();
+    init_timer0();
     init_uart();
     init_adc();
     init_I2C();
+    init_SPI();
 }

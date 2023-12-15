@@ -16,6 +16,9 @@
 #include <proc/pic16f886.h>
 #include <stdio.h>
 
+// SPI
+#include <SPI/spi-master-v1.h>
+
 // With this library we configure the main settings on the MCU
 #include "Init/initall.c"
 // I2C lib
@@ -34,18 +37,24 @@
 int counter;
 int counterRuido10ms, counterRuido1seg, counter5seg; // 2 ticks, 200 ticks, 1000 ticks
 unsigned int NoiseValue, HumValue, TempValue;
-char noiseValues[10];
+unsigned char noiseValues[10];
 int noiseCounterValues; // 0..9
 int maxNoise = 0;
 
 //USART
-char receivedString[20];
+unsigned char receivedString[20];
 int currentIndex = 0;
 int endString = 0;
 
 // I2C
 
 unsigned char co2Data[3]; // prediction0, prediction1, status
+
+// SPI
+unsigned char red, green, blue, alpha;
+
+// FAN
+unsigned char fan_speed;
 
 
 int VEML7700_ReadLux() {
@@ -98,24 +107,52 @@ void send_CO2()
 {
     if(co2Data[2] == 0x00) // OK
     {
-        printf("PPM %u", (co2Data[0] << 7) | co2Data[1]);
+        printf("PPM %u\n", (co2Data[0] << 7) | co2Data[1]);
     }
     else if(co2Data[2] == 0x10) // RUNIN
     {
-        printf("WARMUP");
+        printf("WARMUP\n");
     }
     else if(co2Data[2] == 0x01) // BUSY
     {
-        printf("BUSY");
+        printf("BUSY\n");
     }
     else if(co2Data[2] == 0x80) // ERROR
     {
-        printf("ERROR");
+        printf("ERROR\n");
     }
     else // UNKOWN
     {
-        printf("UNKOWN");
+        printf("UNKOWN\n");
     }
+}
+
+void change_color(unsigned char brigthness, unsigned char red, unsigned char green, unsigned char blue, int n) {
+
+    unsigned char init = 0b11100000;
+    unsigned char global = init | brigthness;
+    // inicio de trama
+    for(int i = 0; i < 4; i++)
+    {
+        spi_write_read((char)0x00);
+    }
+
+    // inicio de LED Frame
+
+    for (int i = 0; i < n; i++)
+    {
+        spi_write_read((char)global);
+        spi_write_read((char)blue);// Blue
+        spi_write_read((char)green);// Green
+        spi_write_read((char)red);// Red
+    }
+
+    // fin de trama
+    for(int i = 0; i < 4; i++)
+    {
+        spi_write_read((char)0xFF);
+    }
+
 }
 
 void putch(char data)
@@ -165,19 +202,19 @@ void __interrupt() int_routine(void)
                     maxNoise = noiseValues[i];
                 }
             }
-            printf("NOISE %u", maxNoise);
+            printf("NOISE %u\n", maxNoise);
         }
         if (counter5seg >= 1000)
         {
             counter5seg = 0;
             HumValue = readADC(12);
             TempValue = readADC(10);
-            printf("HUMIDITY %u", HumValue);
-            printf("TEMPERATURE %u", TempValue);
+            printf("HUMIDITY %u\n", HumValue);
+            printf("TEMPERATURE %u\n", TempValue);
             // I2C
             read_CO2();
             send_CO2();
-            printf("LUX %u", VEML7700_ReadLux());
+            printf("LUX %u\n", VEML7700_ReadLux());
             // Leer Sensores
         }
     }
@@ -191,13 +228,21 @@ void __interrupt() int_routine(void)
             // Se procesan los comandos
             for (int i = 0; i < currentIndex; i++)
             {
-                if (receivedString[i] == "L") {
-                    // LEDS
+                if (receivedString[i] == "L" && currentIndex >= 5) { // We check that the command received has at least 5 chars: "LRGBA" being RGBA the color
+                    currentIndex = 0;
+                    red = receivedString[i+1];
+                    green = receivedString[i+2];
+                    blue = receivedString[i+3];
+                    alpha = receivedString[i+4];
+                    change_color(alpha, red, green, blue, 10); // 10 LEDs
                 }
-                else if (receivedString[i] == "V") {
+                else if (receivedString[i] == "V" && currentIndex >= 2) { // We check that the command received has at least 2 chars: "VS" being S the speed
+                    currentIndex = 0;
+                    fan_speed = receivedString[i+1];
                     // Ventilador
                 }
                 else {
+                    currentIndex = 0;
                     return; // Be careful with the logic below this, maybe we can supress this statement.
                 }
             }
@@ -218,7 +263,7 @@ void main(void)
     counterRuido1seg = 0;
     counter5seg = 0;
     noiseCounterValues = 0;
-    printf("Bienvenido a Lampara inteligente!!"); //this will be send it by UART since putch was redefined.
+    //printf("Bienvenido a Lampara inteligente!!\n"); //this will be send it by UART since putch was redefined.
     while (1)
     {
         
