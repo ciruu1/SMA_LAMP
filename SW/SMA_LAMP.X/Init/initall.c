@@ -60,6 +60,26 @@ void init_timer0()
     TMR0 = 159; // Cada 5 mseg   256-97  (5*10^6/ 256)*0.005 = 97.6 
 }
 
+void init_timer2(void) {
+    T2CONbits.TOUTPS = 0b0000; // Postescalador a 1:1 (Sin postescalador)
+    T2CONbits.TMR2ON = 1; // Activa el temporizador 2
+    T2CONbits.T2CKPS = 0b00; // Preescalado 1
+
+    PIE1bits.TMR2IE = 1; // Habilita la interrupción por coincidencia del TMR2 y PR2
+
+    PR2 = 167; // Para que el periodo del PWM sea 30Khz o 0.033 ms
+}
+
+void init_pwm(void) {
+    CCP1CONbits.P1M = 0b00; // Salida única; P1A modulado; P1B, P1C, P1D asignados como pines de puerto
+    CCP1CONbits.DC1B = 0; // Modo PWM
+    CCP1CONbits.CCP1M = 0b1100; // Modo PWM; P1A, P1C activos en alto; P1B, P1D activos en alto
+    CCPR1L = 0; // El trabajo comienza en 0 %
+    TRISC2 = 0; // Puerto C configurado como salida
+    //ANSEL = 0; // E/S digital
+    //ANSELH = 0; // E/S digital
+}
+
 void init_I2C()
 {
     // Configuración del módulo I2C
@@ -81,6 +101,7 @@ void init(void)
     OSCCON = 0b00001000;
     INTCONbits.GIE = 1;
     init_timer0();
+    init_timer2();
     init_uart();
     init_adc();
     init_I2C();

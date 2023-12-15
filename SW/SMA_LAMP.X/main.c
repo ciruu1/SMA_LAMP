@@ -51,10 +51,13 @@ int endString = 0;
 unsigned char co2Data[3]; // prediction0, prediction1, status
 
 // SPI
-unsigned char red, green, blue, alpha;
+unsigned char red = 0xFF;
+unsigned char green = 0xFF;
+unsigned char blue = 0xFF;
+unsigned char alpha = 0xF0;
 
 // FAN
-unsigned char fan_speed;
+unsigned char fan_speed = 0;
 
 
 int VEML7700_ReadLux() {
@@ -212,9 +215,10 @@ void __interrupt() int_routine(void)
             printf("HUMIDITY %u\n", HumValue);
             printf("TEMPERATURE %u\n", TempValue);
             // I2C
-            read_CO2();
-            send_CO2();
-            printf("LUX %u\n", VEML7700_ReadLux());
+            // TODO REWRITE I2C
+            //read_CO2();
+            //send_CO2();
+            //printf("LUX %u\n", VEML7700_ReadLux());
             // Leer Sensores
         }
     }
@@ -239,6 +243,7 @@ void __interrupt() int_routine(void)
                 else if (receivedString[i] == "V" && currentIndex >= 2) { // We check that the command received has at least 2 chars: "VS" being S the speed
                     currentIndex = 0;
                     fan_speed = receivedString[i+1];
+                    CCPR1L = (unsigned char) ((float) fan_speed / 100.0 * 167); // Convierte el porcentaje a un valor adecuado para CCPR1L
                     // Ventilador
                 }
                 else {
@@ -264,9 +269,6 @@ void main(void)
     counter5seg = 0;
     noiseCounterValues = 0;
     //printf("Bienvenido a Lampara inteligente!!\n"); //this will be send it by UART since putch was redefined.
-    while (1)
-    {
-        
-    }
+    while (1); 
     return;
 }
