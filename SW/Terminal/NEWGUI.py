@@ -1,15 +1,71 @@
+import re
 import serial
 import customtkinter as ctk
 from CTkColorPicker import *
+from serial.serialutil import SerialException
 
 # Default values
 color = "#ffffff"
 intensity = 255
 speed = 100
+red = 0xFF
+green = 0xFF
+blue = 0xFF
+
+ser = serial.Serial()
+
+
+def config_serial():
+    global ser
+    ser = serial.Serial(
+        port="/dev/ttyUSB0",
+        baudrate=9600,
+        bytesize=serial.EIGHTBITS,
+        parity=serial.PARITY_NONE,
+        stopbits=serial.STOPBITS_ONE,
+        timeout=1,
+        xonxoff=False,
+        rtscts=False,
+        write_timeout=None,
+        dsrdtr=False,
+        inter_byte_timeout=None,
+        exclusive=None
+    )
+
+
+def retry():
+    global ser
+    try:
+        config_serial()
+    except SerialException:
+        root = ctk.CTk()
+        root.geometry("210x100")
+        root.title("SMA_COMP")
+        root.resizable(False, False)
+        ctk.CTkLabel(root, text="SMA_COMP\nNOT AVAILABLE", font=("Arial", 25), text_color='yellow').pack(padx=5, pady=5)
+        ctk.CTkButton(root, text="Retry", command=retry).pack(padx=5, pady=5)
+        root.mainloop()
+
+
+retry()
+'''
+try:
+    config_serial()
+except SerialException:
+    root = ctk.CTk()
+    root.geometry("210x100")
+    root.title("SMA_COMP")
+    root.resizable(False, False)
+    ctk.CTkLabel(root, text="SMA_COMP\n NOT AVAILABLE", font=("Arial", 25), text_color='yellow').pack(padx=5, pady=5)
+    buttonUpdate = ctk.CTkButton(root, text="Retry", command=retry).pack(padx=5, pady=5)
+    root.mainloop()
+finally:
+    pass
+'''
 
 
 def hex_to_rgba(color_hex):
-    global red, green, blue, alpha
+    global red, green, blue
     # Eliminar el carácter '#' si está presente
     if color_hex.startswith('#'):
         color_hex = color_hex[1:]
@@ -21,10 +77,9 @@ def hex_to_rgba(color_hex):
     red = (color_dec >> 16) & 255
     green = (color_dec >> 8) & 255
     blue = color_dec & 255
-    alpha = 255  # Establecer el valor alpha predeterminado a 255 (opaco)
 
     # Devolver los valores
-    return red, green, blue, alpha
+    return red, green, blue
 
 
 def button_update():
@@ -32,16 +87,72 @@ def button_update():
     print(color)
     print(hex_to_rgba(color))
     print(intensity)
+
+    # LEDs
+    # "LRGBI" where 'RGB' is the color and 'I' the intensity of light
+    ser.write('L'.encode('utf-8'))
+    ser.write(red.to_bytes(1, 'big'))
+    ser.write(green.to_bytes(1, 'big'))
+    ser.write(blue.to_bytes(1, 'big'))
+    ser.write(intensity.to_bytes(1, 'big'))
+    ser.write('\n'.encode())
+
     print(speed)
+    # FAN
+    # "VS" where 'S' is between 0 and 100
+    ser.write('V'.encode('utf-8'))
+    ser.write(speed.to_bytes(1, 'big'))
+    ser.write('\n'.encode())
 
 
 def update_text():
     # TODO Actualizar los textos aquí cuando recibimos los valores por la UART
-    hum_label.config(text="Humidity: ")
-    temp_label.config(text="Temperature: ")
-    co2_label.config(text="CO2: ")
-    lux_label.config(text="Lux: ")
-    noise_label.config(text="Noise: ")
+    # hum_label.config(text="Humidity: ")
+    # temp_label.config(text="Temperature: ")
+    # co2_label.config(text="CO2: ")
+    # lux_label.config(text="Lux: ")
+    # noise_label.config(text="Noise: ")
+    try:
+        if ser.in_waiting > 0:
+            received_data = ser.readline().decode()
+            match = re.match(r'([A-Z]+) (\d+)', received_data)
+            if match:
+                # Si encontramos un tipo y un número, los imprimimos
+                tipo = match.group(1)
+                valor_x = match.group(2)
+                if tipo == "HUM":
+                    hum_label.config(text=f"Humidity: {valor_x}%")
+                elif tipo == "TEMP":
+                    temp_label.config(text=f"Temperature: {valor_x}ºC")
+                elif tipo == "PPM":
+                    if valor_x.startswith("WARMUP"):
+                        co2_label.config(text=f"CO2: NO DISPONIBLE", text_color='yellow')
+                    elif valor_x.startswith("BUSY"):
+                        co2_label.config(text=f"CO2: BUSY", text_color='red')
+                    elif valor_x.startswith("ERROR"):
+                        co2_label.config(text=f"CO2: ERROR", text_color='red')
+                    elif valor_x.startswith("UNKOWN"):
+                        co2_label.config(text=f"CO2: UNKOWN", text_color='red')
+                    else:
+                        co2_label.config(text=f"CO2: {valor_x} ppm")
+                elif tipo == "LUX":
+                    lux_label.config(text=f"Lux: {valor_x} lx")
+                elif tipo == "NSE":
+                    if 0 <= valor_x <= 400:
+                        noise_label.config(text=f"Ruido bajo", text_color='green')
+                    elif 400 < valor_x <= 900:
+                        noise_label.config(text=f"Ruido intermedio", text_color='yellow')
+                    elif valor_x > 900:
+                        noise_label.config(text=f"Ruido alto", text_color='red')
+                    else:
+                        pass
+                else:  # Maybe here load config on the GUI
+                    pass
+            else:
+                print("Formato no válido")
+    finally:
+        # Schedule the next read after 100 ms
+        text.after(100, update_text)
 
 
 def update_color(col):
@@ -92,6 +203,7 @@ group_label.grid(row=3, column=0, padx=0, pady=0)
 text = ctk.CTkFrame(app, width=200, height=240, border_width=2)
 text.grid(row=0, column=1, padx=0, pady=10)
 text.pack_propagate(False)
+text.after(100, update_text)
 
 hum_label = ctk.CTkLabel(text, text="Humidity: x%", font=("Arial", 20)).pack(expand=True)
 temp_label = ctk.CTkLabel(text, text="Temperature: x", font=("Arial", 20)).pack(expand=True)
