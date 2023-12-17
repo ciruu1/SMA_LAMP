@@ -172,6 +172,11 @@ int readADC(int channel)
     return ((ADRESH) << 8) | ADRESL;
 }
 
+/*
+ * 
+ * BEHAVIOUR BLOCK IN HIGH LEVEL DIAGRAM
+ * 
+ */
 void __interrupt() int_routine(void)
 {
     if (INTCONbits.T0IF)
@@ -182,7 +187,7 @@ void __interrupt() int_routine(void)
         counter5seg += 1;
         TMR0 = 159;
         INTCONbits.T0IF = 0;
-        if (counterRuido10ms >= 2) // NOISE
+        if (counterRuido10ms >= 2) /* B-20 */
         {
             counterRuido10ms = 0;
             NoiseValue = readADC(8); // AN8
@@ -190,11 +195,11 @@ void __interrupt() int_routine(void)
             {
                 noiseCounterValues = 0;
             }
-            noiseValues[noiseCounterValues] = NoiseValue;
+            noiseValues[noiseCounterValues] = NoiseValue; // B-30
             noiseCounterValues++;
             // Leer ruido 10 ms
         }
-        if (counterRuido1seg >= 200)
+        if (counterRuido1seg >= 200) /* B-40 */
         {
             counterRuido1seg = 0;
             maxNoise = 0;
@@ -207,7 +212,7 @@ void __interrupt() int_routine(void)
             }
             printf("NOISE %u\n", maxNoise);
         }
-        if (counter5seg >= 1000)
+        if (counter5seg >= 1000) /* B-50 */
         {
             counter5seg = 0;
             HumValue = readADC(12);
@@ -232,6 +237,7 @@ void __interrupt() int_routine(void)
             // Se procesan los comandos
             for (int i = 0; i < currentIndex; i++)
             {
+                /* B-70 */
                 if (receivedString[i] == "L" && currentIndex >= 5) { // We check that the command received has at least 5 chars: "LRGBA" being RGBA the color
                     currentIndex = 0;
                     red = receivedString[i+1];
@@ -240,6 +246,7 @@ void __interrupt() int_routine(void)
                     alpha = receivedString[i+4];
                     change_color(alpha, red, green, blue, 10); // 10 LEDs
                 }
+                /* B-80 */
                 else if (receivedString[i] == "V" && currentIndex >= 2) { // We check that the command received has at least 2 chars: "VS" being S the speed
                     currentIndex = 0;
                     fan_speed = receivedString[i+1];
@@ -269,6 +276,6 @@ void main(void)
     counter5seg = 0;
     noiseCounterValues = 0;
     //printf("Bienvenido a Lampara inteligente!!\n"); //this will be send it by UART since putch was redefined.
-    while (1); 
+    while (1); /* B-10 */
     return;
 }
