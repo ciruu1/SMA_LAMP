@@ -230,6 +230,7 @@ void __interrupt() int_routine(void)
     //UART
     if (PIR1bits.RCIF)
     {
+        PIR1bits.RCIF = 0;
         receivedString[currentIndex] = RCREG; // Lee el carácter recibido
         currentIndex++;
         if (receivedString[currentIndex] == '\n')
