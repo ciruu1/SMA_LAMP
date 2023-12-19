@@ -11,6 +11,7 @@
             <sourceRootList>
                 <sourceRootElem>SPI</sourceRootElem>
                 <sourceRootElem>Init</sourceRootElem>
+                <sourceRootElem>I2C</sourceRootElem>
             </sourceRootList>
             <confList>
                 <confElem>

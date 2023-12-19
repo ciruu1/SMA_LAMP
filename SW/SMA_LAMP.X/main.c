@@ -19,10 +19,13 @@
 // SPI
 #include <SPI/spi-master-v1.h>
 
+// I2C
+#include <I2C/i2c-v2.h>
+
 // With this library we configure the main settings on the MCU
 #include "Init/initall.c"
 // I2C lib
-#include "i2c.c"
+
 
 // I2C
 #define I2C_ADDRESS 0x5A   // Dirección I2C del sensor iAQ-Core (7 bits, sin incluir el bit de lectura/escritura)
@@ -64,46 +67,64 @@ int VEML7700_ReadLux() {
     unsigned int luxValue = 0;
 
     // Comunicarse con el sensor VEML7700
-    I2C_Start();                  // Iniciar condición de inicio
-    I2C_Write(VEML7700_ADDRESS_WRITE);  // Enviar la dirección del dispositivo con el bit de escritura
-    I2C_Write(VEML7700_COMMAND_CODE);   // Enviar el código de comando para lectura de Lux
-    I2C_Stop();                   // Enviar condición de parada
+    i2c_start();                  // Iniciar condición de inicio
+    i2c_write(VEML7700_ADDRESS_WRITE);  // Enviar la dirección del dispositivo con el bit de escritura
+    i2c_write(VEML7700_COMMAND_CODE);   // Enviar el código de comando para lectura de Lux
+    i2c_stop();                   // Enviar condición de parada
 
     // Leer los dos bytes de Lux del sensor VEML7700
-    I2C_Start();                  // Iniciar condición de inicio
-    I2C_Write(VEML7700_ADDRESS_READ);   // Enviar la dirección del dispositivo con el bit de lectura
+    i2c_start();                  // Iniciar condición de inicio
+    if (i2c_write(VEML7700_ADDRESS_READ)) {// Enviar la dirección del dispositivo con el bit de lectura
+        luxValue = i2c_read(1) << 8;  // Leer el byte alto de Lux
+        //I2C_Ack();                   // Enviar ACK para indicar que se espera otro byte
 
-    luxValue = I2C_Read() << 8;  // Leer el byte alto de Lux
-    I2C_Ack();                   // Enviar ACK para indicar que se espera otro byte
+        luxValue |= i2c_read(0);      // Leer el byte bajo de Lux
+        //I2C_Nack();                  // Enviar NACK para indicar que no se esperan más bytes
+        i2c_stop();                  // Enviar condición de parada
+    }   
 
-    luxValue |= I2C_Read();      // Leer el byte bajo de Lux
-    I2C_Nack();                  // Enviar NACK para indicar que no se esperan más bytes
-    I2C_Stop();                  // Enviar condición de parada
-
+   
     return luxValue;
 }
 
-void read_CO2()
+int read_co2()
 {
-    // Comunicarse con el sensor iAQ-Core
-    I2C_Start();          // Iniciar condición de inicio
-    I2C_Write(I2C_ADDRESS << 1);  // Enviar la dirección del dispositivo con el bit de escritura
-    I2C_Write(I2C_READ_CMD);      // Enviar el comando de lectura
-    I2C_Stop();           // Enviar condición de parada
+    uint8_t data[10];
+    uint16_t prediccion;
+    uint8_t status;
+    int32_t resistencia;
+    uint16_t Tvoc;
 
-    // Leer datos del sensor iAQ-Core
-    I2C_Start();          // Iniciar condición de inicio
-    I2C_Write((I2C_ADDRESS << 1) | 0x01);  // Enviar la dirección del dispositivo con el bit de lectura
+    i2c_start();
+
+    if(i2c_write(0xB5))            //si devuelve ack
+    {
+        data[0] = i2c_read(1);
+        data[1] = i2c_read(1);
+        data[2] = i2c_read(1);
+        data[3] = i2c_read(1);
+        data[4] = i2c_read(1);
+        data[5] = i2c_read(1);
+        data[6] = i2c_read(0);
+        data[7] = i2c_read(1);
+        data[8] = i2c_read(0);
+
+        i2c_stop();
+    }
     
-    unsigned char co2Data[0] = I2C_Read();  // Leer primer byte de predicción
-    I2C_Ack();                                   // Enviar ACK para indicar que se espera otro byte
 
-    unsigned char co2Data[1] = I2C_Read();  // Leer segundo byte de predicción
-    I2C_Ack();                                   // Enviar ACK para indicar que se espera otro byte
-
-    unsigned char co2Data[2] = I2C_Read();       // Leer byte de estado
-    I2C_Nack();                                 // Enviar NACK para indicar que no se esperan más bytes
-    I2C_Stop();           // Enviar condición de parada
+    prediccion = (data[0] * 256) + data[1];
+    status = data[2];
+    resistencia = (data[4] * 65536) + (data[5] * 256) + data[6];
+    Tvoc = (data[7] * 256) + data[8];
+    
+    
+    //printf("%d\r\n", prediccion);
+    //printf("%d\r\n", status);
+    //printf("%d\r\n", resistencia);
+    printf("%d\r\n", Tvoc);
+    
+    return prediccion;
 }
 
 void send_CO2()
@@ -217,13 +238,15 @@ void __interrupt() int_routine(void)
             counter5seg = 0;
             HumValue = readADC(12);
             TempValue = readADC(10);
-            printf("HUMIDITY %u\n", HumValue);
-            printf("TEMPERATURE %u\n", TempValue);
+            //printf("HUMIDITY %u\n", HumValue);
+            //printf("TEMPERATURE %u\n", TempValue);
+            
+            printf("HUMIDITY %f\n", (((((float)HumValue/1024.0) * 5.0) - 0.826) / 0.0315));
+            printf("TEMPERATURE %f\n", ((((float)TempValue/1024.0) * 5.0) / 0.01));
             // I2C
             // TODO REWRITE I2C
-            //read_CO2();
-            //send_CO2();
-            //printf("LUX %u\n", VEML7700_ReadLux());
+            printf("PPM %u", read_co2());
+            printf("LUX %u\n", VEML7700_ReadLux());
             // Leer Sensores
         }
     }
