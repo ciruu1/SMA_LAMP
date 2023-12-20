@@ -92,8 +92,11 @@ void init_I2C()
 }
 
 void init_SPI() {
-    TRISC0 = 0; // SCK como salida (reloj)
-    TRISC1 = 0; // SDO como salida (Maestro manda esclavo)
+    //TRISC0 = 0; // SCK como salida (reloj)
+    //TRISC1 = 0; // SDO como salida (Maestro manda esclavo)
+    TRISCbits.TRISC0 = 0;
+    TRISCbits.TRISC1 = 0;
+    TRISAbits.TRISA5 = 1;
 }
 
 void init(void)

@@ -16,7 +16,7 @@ import serial
 # Create serial instance
 
 ser = serial.Serial(
-port = "COM6", 
+port = "/dev/ttyUSB0",
 baudrate = 9600,
 bytesize=serial.EIGHTBITS,
 parity= serial.PARITY_NONE,
@@ -56,6 +56,7 @@ while not Fin:
         B_cod = input("Azul [0..255]: ")
         L_cod = input("Luminosidad [0..31]: ")
         
+        '''
         bytes_writen = ser.write(('R').encode('utf-8'))
         bytes_writen = ser.write(int(R_cod).to_bytes(1, 'big'))
         
@@ -70,7 +71,19 @@ while not Fin:
         
         bytes_writen = ser.write(('L').encode('utf-8'))
         bytes_writen = ser.write(int(L_cod).to_bytes(1, 'big'))
-        
+        '''
+
+        bytes_writen = ser.write(('L').encode('utf-8'))
+        bytes_writen = ser.write(int(R_cod).to_bytes(1, 'big'))
+
+
+        bytes_writen = ser.write(int(G_cod).to_bytes(1, 'big'))
+
+
+        bytes_writen = ser.write(int(B_cod).to_bytes(1, 'big'))
+
+
+        bytes_writen = ser.write(int(L_cod).to_bytes(1, 'big'))
         ser.write('\r\n'.encode())
         
     elif resp[0] == '2':

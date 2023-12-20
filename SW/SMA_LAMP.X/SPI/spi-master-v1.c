@@ -3,11 +3,14 @@
 #include <xc.h>
 
 #define _XTAL_FREQ 20000000 // necessary for __delay_us
+#define spi_clk PORTCbits.RC0
+#define spi_dat_out PORTCbits.RC1
+#define spi_dat_in PORTAbits.RA5
 
 
 char spi_write_read(char one_byte)
 {
-    char x;
+    //char x;
     char answer, x;
     
     answer = 0;

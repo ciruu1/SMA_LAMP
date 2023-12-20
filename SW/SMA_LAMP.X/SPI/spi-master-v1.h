@@ -8,8 +8,8 @@
 #ifndef SPI_MASTER_V1_H
 #define	SPI_MASTER_V1_H
 
-#define spi_clk PORTCbits.RC1
-#define spi_dat_out PORTCbits.RC0
+#define spi_clk PORTCbits.RC0
+#define spi_dat_out PORTCbits.RC1
 #define spi_dat_in PORTAbits.RA5
 
 

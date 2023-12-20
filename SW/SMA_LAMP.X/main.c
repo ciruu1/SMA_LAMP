@@ -17,10 +17,10 @@
 #include <stdio.h>
 
 // SPI
-#include <SPI/spi-master-v1.h>
+#include "SPI/spi-master-v1.c"
 
 // I2C
-#include <I2C/i2c-v2.h>
+#include "I2C/i2c-v2.c"
 
 // With this library we configure the main settings on the MCU
 #include "Init/initall.c"
@@ -36,22 +36,25 @@
 #define VEML7700_ADDRESS_READ  0x21  // Dirección I2C del sensor VEML7700 en modo lectura
 #define VEML7700_COMMAND_CODE  0x00  // Código de comando para lectura de Lux
 
+#define UART_STRING_TAM 7
 
+int uart_complete = 0;
 int counter;
 int counterRuido10ms, counterRuido1seg, counter5seg; // 2 ticks, 200 ticks, 1000 ticks
 unsigned int NoiseValue, HumValue, TempValue;
-unsigned char noiseValues[10];
-int noiseCounterValues; // 0..9
-int maxNoise = 0;
+//unsigned char noiseValues[10];
+unsigned char currentNoiseValue = 0;
+//int noiseCounterValues; // 0..9
+//int maxNoise = 0;
 
 //USART
-unsigned char receivedString[20];
+unsigned char receivedString[UART_STRING_TAM];
 int currentIndex = 0;
 int endString = 0;
 
 // I2C
 
-unsigned char co2Data[3]; // prediction0, prediction1, status
+//unsigned char co2Data[3]; // prediction0, prediction1, status
 
 // SPI
 unsigned char red = 0xFF;
@@ -63,6 +66,37 @@ unsigned char alpha = 0xF0;
 unsigned char fan_speed = 0;
 
 
+void putch(char data)
+{
+    while (!TXIF); // Espera hasta que el registro de transmisión esté listo para enviar
+    TXREG = data; // Carga el carácter en el registro de transmisión
+}
+/*
+void debug(char num)
+{
+    putch(num);
+    putch('\n');
+}
+
+
+void send_string(const char *str)
+{
+    // Verifica que el puntero no sea nulo
+    if (str == NULL) {
+        //printf("Error: El puntero al string es nulo.\n");
+        return;
+    }
+
+    // Itera sobre cada caracter del string
+    while (*str != '\0') {
+        // Llama a la función printchar con el caracter actual
+        sendchar(*str);
+        // Incrementa el puntero al siguiente caracter
+        str++;
+    }
+}
+
+*/
 int VEML7700_ReadLux() {
     unsigned int luxValue = 0;
 
@@ -87,7 +121,7 @@ int VEML7700_ReadLux() {
     return luxValue;
 }
 
-int read_co2()
+void read_co2()
 {
     uint8_t data[10];
     uint16_t prediccion;
@@ -118,38 +152,60 @@ int read_co2()
     resistencia = (data[4] * 65536) + (data[5] * 256) + data[6];
     Tvoc = (data[7] * 256) + data[8];
     
+    //send_string("PPM");
+    //putch('P');
+    //putch(' ');
+    //INTCONbits.GIE = 0;
+    if(data[2] == 0x00) // OK
+    {
+        printf("PP %u\n", (data[0] << 7) | data[1]);
+        //putch(data[0]);
+        //putch(data[1]);
+    }
+    else if(data[2] == 0x10) // RUNIN
+    {
+        printf("PP WAR\n");
+        //send_string("WAR");
+        //putch('W');
+        //putch('A');
+        //putch('R');
+    }
+    else if(data[2] == 0x01) // BUSY
+    {
+        printf("PP BUS\n");
+        //send_string("BUS");
+        //putch('B');
+        //putch('U');
+        //putch('S');
+    }
+    else if(data[2] == 0x80) // ERROR
+    {
+        printf("PP ERR\n");
+        //send_string("ERR");
+        //putch('E');
+        //putch('R');
+        //putch('R');
+    }
+    else // UNKOWN
+    {
+        printf("PP UNK\n");
+        //send_string("UNK");
+        //putch('U');
+        //putch('N');
+        //putch('K');
+    }
+    //INTCONbits.GIE = 1;
+    //putch('\n');
+    
     
     //printf("%d\r\n", prediccion);
     //printf("%d\r\n", status);
     //printf("%d\r\n", resistencia);
-    printf("%d\r\n", Tvoc);
+    //printf("%d\r\n", Tvoc);
     
-    return prediccion;
+    //return prediccion;
 }
 
-void send_CO2()
-{
-    if(co2Data[2] == 0x00) // OK
-    {
-        printf("PPM %u\n", (co2Data[0] << 7) | co2Data[1]);
-    }
-    else if(co2Data[2] == 0x10) // RUNIN
-    {
-        printf("WARMUP\n");
-    }
-    else if(co2Data[2] == 0x01) // BUSY
-    {
-        printf("BUSY\n");
-    }
-    else if(co2Data[2] == 0x80) // ERROR
-    {
-        printf("ERROR\n");
-    }
-    else // UNKOWN
-    {
-        printf("UNKOWN\n");
-    }
-}
 
 void change_color(unsigned char brigthness, unsigned char red, unsigned char green, unsigned char blue, int n) {
 
@@ -178,12 +234,74 @@ void change_color(unsigned char brigthness, unsigned char red, unsigned char gre
     }
 
 }
+/*
 
-void putch(char data)
+void change_color(uint8_t brillo, uint8_t r, uint8_t g, uint8_t b)
 {
-    while (!TXIF); // Espera hasta que el registro de transmisión esté listo para enviar
-    TXREG = data; // Carga el carácter en el registro de transmisión
+    spi_write_read(0);
+    spi_write_read(0);
+    spi_write_read(0);
+    spi_write_read(0);
+
+    spi_write_read((char)(brillo + 155));           //224 = 1110 0000
+    spi_write_read((char)b);
+    spi_write_read((char)g);
+    spi_write_read((char)r);
+
+    spi_write_read((char)(brillo + 155));           //224 = 1110 0000
+    spi_write_read((char)b);
+    spi_write_read((char)g);
+    spi_write_read((char)r);
+
+    spi_write_read((char)(brillo + 155));           //224 = 1110 0000
+    spi_write_read((char)b);
+    spi_write_read((char)g);
+    spi_write_read((char)r);
+
+    spi_write_read((char)(brillo + 155));           //224 = 1110 0000
+    spi_write_read((char)b);
+    spi_write_read((char)g);
+    spi_write_read((char)r);
+
+    spi_write_read((char)(brillo + 155));           //224 = 1110 0000
+    spi_write_read((char)b);
+    spi_write_read((char)g);
+    spi_write_read((char)r);
+    
+
+    spi_write_read((char)(brillo + 155));           //224 = 1110 0000
+    spi_write_read((char)b);
+    spi_write_read((char)g);
+    spi_write_read((char)r);
+
+    spi_write_read((char)(brillo + 155));           //224 = 1110 0000
+    spi_write_read((char)b);
+    spi_write_read((char)g);
+    spi_write_read((char)r);
+
+    spi_write_read((char)(brillo + 155));           //224 = 1110 0000
+    spi_write_read((char)b);
+    spi_write_read((char)g);
+    spi_write_read((char)r);
+
+    spi_write_read((char)(brillo + 155));           //224 = 1110 0000
+    spi_write_read((char)b);
+    spi_write_read((char)g);
+    spi_write_read((char)r);
+
+    spi_write_read((char)(brillo + 155));           //224 = 1110 0000
+    spi_write_read((char)b);
+    spi_write_read((char)g);
+    spi_write_read((char)r);
+
+
+    spi_write_read(0xFF);
+    spi_write_read(0xFF);
+    spi_write_read(0xFF);
+    spi_write_read(0xFF);
+
 }
+*/
 
 int readADC(int channel)
 {
@@ -191,6 +309,17 @@ int readADC(int channel)
     ADCON0bits.GO = 1;
     while (ADCON0bits.GO);
     return ((ADRESH) << 8) | ADRESL;
+}
+
+uint8_t UART_GetC()
+{
+  while (RCIF == 0) ;  // wait for data receive
+  if (OERR)  // if there is overrun error
+  {  // clear overrun error bit
+    CREN = 0;
+    CREN = 1;
+  }
+  return RCREG;        // read from EUSART receive data register
 }
 
 /*
@@ -210,84 +339,140 @@ void __interrupt() int_routine(void)
         INTCONbits.T0IF = 0;
         if (counterRuido10ms >= 2) /* B-20 */
         {
+            //debug('2'); // DEBUG
             counterRuido10ms = 0;
             NoiseValue = readADC(8); // AN8
-            if (noiseCounterValues >= 10)
+            if (NoiseValue >= currentNoiseValue)
             {
-                noiseCounterValues = 0;
+                currentNoiseValue = NoiseValue;
             }
-            noiseValues[noiseCounterValues] = NoiseValue; // B-30
-            noiseCounterValues++;
+            //noiseValues[noiseCounterValues] = NoiseValue; // B-30
+            //noiseCounterValues++;
             // Leer ruido 10 ms
+            if (uart_complete != 0)
+            {
+                uart_complete = 0;
+                currentIndex = 0;
+                if (receivedString[0] = 'R')
+                {
+                    change_color(receivedString[4], receivedString[1], receivedString[2], receivedString[3], 10);
+                    CCPR1L = (receivedString[5] * 167) / 100;
+                    for (int i = 0; i < UART_STRING_TAM; i++)
+                    {
+                        putch(receivedString[i]);
+                        receivedString[i] = 0;
+                    }
+                    putch('\n');
+                }
+                
+                
+            }
         }
         if (counterRuido1seg >= 200) /* B-40 */
         {
             counterRuido1seg = 0;
-            maxNoise = 0;
-            for (int i = 0; i < 10; i++)
-            {
-                if (noiseValues[i] >= maxNoise)
-                {
-                    maxNoise = noiseValues[i];
-                }
-            }
-            printf("NOISE %u\n", maxNoise);
+
+            printf("NO %u\n", currentNoiseValue);
+
+            currentNoiseValue = 0;
         }
         if (counter5seg >= 1000) /* B-50 */
         {
             counter5seg = 0;
+            printf("LU %u\n", VEML7700_ReadLux());
+
             HumValue = readADC(12);
             TempValue = readADC(10);
-            //printf("HUMIDITY %u\n", HumValue);
-            //printf("TEMPERATURE %u\n", TempValue);
+            printf("HU %u\n", HumValue);
+            printf("TE %u\n", TempValue);
             
-            printf("HUMIDITY %f\n", (((((float)HumValue/1024.0) * 5.0) - 0.826) / 0.0315));
-            printf("TEMPERATURE %f\n", ((((float)TempValue/1024.0) * 5.0) / 0.01));
-            // I2C
-            // TODO REWRITE I2C
-            printf("PPM %u", read_co2());
-            printf("LUX %u\n", VEML7700_ReadLux());
+
+            read_co2();
+            
             // Leer Sensores
         }
     }
     //UART
     if (PIR1bits.RCIF)
     {
+        
+        
+        receivedString[currentIndex] = UART_GetC(); // Lee el carácter recibido
         PIR1bits.RCIF = 0;
-        receivedString[currentIndex] = RCREG; // Lee el carácter recibido
-        currentIndex++;
-        if (receivedString[currentIndex] == '\n')
+        
+        
+        //putch('X');
+        //putch(receivedString[currentIndex]);
+        //putch('\r');
+        //putch('\n');
+        /*
+        if (receivedString[currentIndex] == '\r')
         {
-            // Se procesan los comandos
-            for (int i = 0; i < currentIndex; i++)
+            //change_color(receivedString[4], receivedString[1], receivedString[2], receivedString[3], 10);
+            //printf("%c%c%c%c%c", receivedString[0], receivedString[1], receivedString[2], receivedString[3], receivedString[4]);
+            //putch('\r');
+            for (int i = 0; i < 6; i++)
             {
-                /* B-70 */
-                if (receivedString[i] == "L" && currentIndex >= 5) { // We check that the command received has at least 5 chars: "LRGBA" being RGBA the color
-                    currentIndex = 0;
-                    red = receivedString[i+1];
-                    green = receivedString[i+2];
-                    blue = receivedString[i+3];
-                    alpha = receivedString[i+4];
-                    change_color(alpha, red, green, blue, 10); // 10 LEDs
-                }
-                /* B-80 */
-                else if (receivedString[i] == "V" && currentIndex >= 2) { // We check that the command received has at least 2 chars: "VS" being S the speed
-                    currentIndex = 0;
-                    fan_speed = receivedString[i+1];
-                    CCPR1L = (unsigned char) ((float) fan_speed / 100.0 * 167); // Convierte el porcentaje a un valor adecuado para CCPR1L
-                    // Ventilador
-                }
-                else {
-                    currentIndex = 0;
-                    return; // Be careful with the logic below this, maybe we can supress this statement.
-                }
+                putch(receivedString[i]);
             }
+            
+            putch('\n');
+            receivedString[currentIndex] = 'D';
+            //change_color(31, receivedString[1], 0, 0); // 10 LEDs
+            
+            
+            //putch('T');
+            
+            // Se procesan los comandos
+            if (receivedString[0] == 'R')
+            {
+                red = receivedString[1];
+                //change_color(alpha, red, green, blue); // 10 LEDs
+            }
+            if (receivedString[0] == 'G')
+            {
+                green = receivedString[1];
+                //change_color(alpha, red, green, blue); // 10 LEDs
+            }
+            if (receivedString[0] == 'B')
+            {
+                blue = receivedString[1];
+                //change_color(alpha, red, green, blue); // 10 LEDs
+            }
+            if (receivedString[0] == 'I')
+            {
+                alpha = receivedString[1];
+                //change_color(alpha, red, green, blue); // 10 LEDs
+            }
+            if (receivedString[0] == 'V')
+            {
+                CCPR1L = (receivedString[1] * 166) / 100;
+                //change_color(alpha, red, green, blue);
+            }
+            
+            
+                
+            
+            currentIndex = 0;
+            //debug('5'); // DEBUG
         }
+        */
+        if (receivedString[currentIndex] == '\r')
+        {
+            uart_complete = 1;
+            //putch('C');
+            //putch('\n');
+        }
+        
+        currentIndex++;
+        
         // Verifica si la cadena está completa y no se recibió '\n'
-        if (currentIndex == sizeof (receivedString) - 1 && receivedString[currentIndex - 1] != '\n')
+        
+        /*if (currentIndex == UART_STRING_TAM - 1 && receivedString[currentIndex - 1] != '\r')
         {
             currentIndex = 0; // Reinicia el índice si se produce un desbordamiento
-        }
+        }*/
+        
     }
 }
 
@@ -298,7 +483,11 @@ void main(void)
     counterRuido10ms = 0;
     counterRuido1seg = 0;
     counter5seg = 0;
-    noiseCounterValues = 0;
+    CCPR1L = 0;
+    //change_color(31, 255, 127, 0, 10);
+    //change_color(31, 255, 0, 255);
+    //debug('1'); // DEBUG
+    //noiseCounterValues = 0;
     //printf("Bienvenido a Lampara inteligente!!\n"); //this will be send it by UART since putch was redefined.
     while (1); /* B-10 */
     return;
