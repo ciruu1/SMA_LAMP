@@ -96,8 +96,7 @@ def hex_to_rgba(color_hex):
 def button_update():
     # TODO Enviar aquí la config por la UART
     #print(color)
-    print(hex_to_rgba(color))
-    print(f"{red} {green} {blue}")
+
     #print(intensity)
     t = 0.01
     # LEDs
@@ -106,27 +105,20 @@ def button_update():
     sleep(t)
     ser.write(red.to_bytes(1))
     sleep(t)
-    #ser.write('\r\n'.encode())
-    #ser.write('G'.encode('utf-8'))
     ser.write(green.to_bytes(1, 'big'))
     sleep(t)
-    #ser.write('\r\n'.encode())
-    #ser.write('B'.encode('utf-8'))
     ser.write(blue.to_bytes(1, 'big'))
     sleep(t)
-    #ser.write('\r\n'.encode())
-    #ser.write('A'.encode('utf-8'))
     ser.write(intensity.to_bytes(1, 'big'))
     sleep(t)
-    #ser.write('\r\n'.encode())
-
-    #print(speed)
-    # FAN
-    # "VS" where 'S' is between 0 and 100
-    #ser.write('V'.encode('utf-8'))
-    ser.write(speed.to_bytes(1, 'big'))
+    CCPR1L = int(float(speed / 100) * 167)
+    ser.write(CCPR1L.to_bytes(1, 'big'))
     sleep(t)
     ser.write('\r'.encode())
+
+    print(hex_to_rgba(color))
+    print(f"{red} {green} {blue} speed: {CCPR1L}")
+
     #ser.write('\r\n'.encode())
 
 def process(line):
@@ -144,6 +136,7 @@ def update_text():
             #process(ser.readline())
             end_line = b'\r' + b'\n'
             #received_data = ser.read_until(expected=b'\n')
+            #print(ser.read_until(expected=b'\n'))
             received_data = ser.readline().decode('utf-8')
             print(f"RAW: {received_data}")
             #print(f"BYTES: {bytes(received_data, 'utf-8')}")
@@ -192,18 +185,9 @@ def update_text():
                     hum_label.configure(text=f"Humidity: {abs(((((float(valor_x) / 1024.0) * 5.0) - 0.826) / 0.0315)):.1f}%")
                 elif tipo == "TE":
                     far = (((float(valor_x) / 1024.0) * 5.0) / 0.01)
-                    temp_label.configure(text=f"Temperature: {((far - 32) * 5/9)-10:.1f}ºC")
+                    temp_label.configure(text=f"Temperature: {((far - 32) * 5/9)-7:.1f}ºC")
                 elif tipo == "PP":
-                    if tipo.__contains__("WAR"):
-                        co2_label.configure(text=f"CO2: NO DISPONIBLE", text_color='yellow')
-                    elif valor_x.startswith("BUS"):
-                        co2_label.configure(text=f"CO2: BUSY", text_color='red')
-                    elif valor_x.startswith("ERR"):
-                        co2_label.configure(text=f"CO2: ERROR", text_color='red')
-                    elif valor_x.startswith("UNK"):
-                        co2_label.configure(text=f"CO2: UNKOWN", text_color='red')
-                    else:
-                        co2_label.configure(text=f"CO2: {valor_x} ppm")
+                    co2_label.configure(text=f"CO2: {valor_x} ppm")
                 elif tipo == "LU":
                     lux_label.configure(text=f"Lux: {valor_x} lx")
                 elif tipo == "NO":
@@ -215,11 +199,19 @@ def update_text():
                         noise_label.configure(text=f"Ruido alto", text_color='red')
                     else:
                         pass
+                elif tipo.startswith("WAR"):
+                    co2_label.configure(text=f"CO2: NO DISPONIBLE", text_color='yellow')
+                elif tipo.startswith("BUS"):
+                    co2_label.configure(text=f"CO2: BUSY", text_color='red')
+                elif tipo.startswith("ERR"):
+                    co2_label.configure(text=f"CO2: ERROR", text_color='red')
+                elif tipo.startswith("UNK"):
+                    co2_label.configure(text=f"CO2: UNKOWN", text_color='red')
                 else:  # Maybe here load config on the GUI
                     pass
             else:
                 print(f"Formato no válido {received_data}")
-                
+
 
     finally:
         # Schedule the next read after 100 ms
@@ -234,7 +226,7 @@ def update_color(col):
 def update_intensity(inten):
     global intensity
     intensity = int(inten)
-    intensity_label.configure(text=str(f"Intensity: {int((intensity * 100) / 255)}%"))
+    intensity_label.configure(text=str(f"Intensity: {intensity}"))
 
 
 def update_fan(spd):
@@ -289,7 +281,7 @@ lux_label.pack(expand=True)
 noise_label = ctk.CTkLabel(text, text="Noise: X", font=("Arial", 20))
 noise_label.pack(expand=True)
 
-text.after(100, update_text())
+text.after(145, update_text())
 
 app.mainloop()
 

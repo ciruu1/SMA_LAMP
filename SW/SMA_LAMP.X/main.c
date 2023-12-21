@@ -34,17 +34,7 @@
 #define I2C_ADDRESS 0x5A   // Dirección I2C del sensor iAQ-Core (7 bits, sin incluir el bit de lectura/escritura)
 #define I2C_READ_CMD 0xB5  // Comando de lectura
 
-#define VEML7700_ALS_CONFIG 0x00        /*!< Light configuration register */
-#define VEML7700_ALS_THREHOLD_HIGH 0x01 /*!< Light high threshold for irq */
-#define VEML7700_ALS_THREHOLD_LOW 0x02  /*!< Light low threshold for irq */
-#define VEML7700_ALS_POWER_SAVE 0x03    /*!< Power save register */
-#define VEML7700_ALS_DATA 0x04          /*!< The light data output */
 #define VEML7700_WHITE_DATA 0x05        /*!< The white light data output */
-#define VEML7700_INTERRUPTSTATUS 0x06   /*!< What IRQ (if any) */
-
-#define VEML7700_INTERRUPT_HIGH 0x4000  /*!< Interrupt status for high threshold */
-#define VEML7700_INTERRUPT_LOW 0x8000   /*!< Interrupt status for low threshold */
-
 
 #define VEML7700_GAIN_1_8 0x02          /*!< ALS gain 1/8x */
 #define VEML7700_IT_100MS 0x00          /*!< ALS intetgration time 100ms */
@@ -53,8 +43,8 @@
 
 
 // Definiciones para la configuración del I2C y el sensor VEML7700
-#define VEML7700_ADDRESS_WRITE 0x10  // Dirección I2C del sensor VEML7700 en modo escritura
-#define VEML7700_ADDRESS_READ  0x11  // Dirección I2C del sensor VEML7700 en modo lectura
+#define VEML7700_ADDRESS_WRITE 0x20  // Dirección I2C del sensor VEML7700 en modo escritura
+#define VEML7700_ADDRESS_READ  0x21  // Dirección I2C del sensor VEML7700 en modo lectura
 #define VEML7700_COMMAND_CODE  0x00  // Código de comando para lectura de Lux
 
 #define UART_STRING_TAM 7
@@ -104,9 +94,14 @@ void putch(char data)
 void VEML7700_Init() 
 {
     i2c_start();
-    i2c_write(VEML7700_ADDRESS_WRITE);  // Enviar la dirección del dispositivo con el bit de escritura
-    i2c_write(VEML7700_COMMAND_CODE);   // Enviar el código de comando para lectura de Lux
-    i2c_stop();                   // Enviar condición de parada
+    if (i2c_write(VEML7700_ADDRESS_WRITE))
+    {
+        //printf("I2C INIT\n");
+        i2c_write(VEML7700_COMMAND_CODE);
+        i2c_write(0b00000000);
+        i2c_write(0b00010000);
+        i2c_stop();
+    }
 }
 
 int VEML7700_ReadLux() 
@@ -114,17 +109,27 @@ int VEML7700_ReadLux()
     unsigned int luxValue = 0;
     
     i2c_start();
-    i2c_write(VEML7700_ADDRESS_WRITE);
-    i2c_write(VEML7700_WHITE_DATA);
-    //i2c_stop();
+    if (i2c_write(VEML7700_ADDRESS_WRITE))
+    {
+        if (i2c_write(VEML7700_WHITE_DATA)) 
+        {
+
+            i2c_start();
+            if (i2c_write(VEML7700_ADDRESS_READ))
+            {
+                uint8_t read_data[2];
+                read_data[0] = i2c_read(0);  // Leer el byte alto de Lux
+                read_data[1] = i2c_read(0);      // Leer el byte bajo de Lux
+                //luxValue = read_data[1] << 8 | read_data[0];
+                luxValue = read_data[0];
+                i2c_stop();
+            }
+        
+        }
+        
+    }
     
-    i2c_start();
-    i2c_write(VEML7700_ADDRESS_READ);
-    uint8_t read_data[2];
-    read_data[0] = i2c_read(0);  // Leer el byte alto de Lux
-    read_data[1] = i2c_read(1);      // Leer el byte bajo de Lux
-    luxValue = read_data[0] | read_data[1] << 8;
-    i2c_stop();                  // Enviar condición de parada
+                      // Enviar condición de parada
    
     return luxValue;
 }
@@ -166,19 +171,19 @@ void read_co2()
     }
     else if(data[2] == 0x10) // RUNIN
     {
-        printf("PP WAR\n");
+        printf("WAR\n");
     }
     else if(data[2] == 0x01) // BUSY
     {
-        printf("PP BUS\n");
+        printf("BUS\n");
     }
     else if(data[2] == 0x80) // ERROR
     {
-        printf("PP ERR\n");
+        printf("ERR\n");
     }
     else // UNKOWN
     {
-        printf("PP UNK\n");
+        printf("UNK\n");
     }
 }
 
@@ -238,6 +243,25 @@ uint8_t UART_GetC()
  */
 void __interrupt() int_routine(void)
 {
+    //UART
+    if (PIR1bits.RCIF)
+    {
+        PIR1bits.RCIF = 0;
+        if (currentIndex == UART_STRING_TAM || uart_complete == 1)
+        {
+            return;
+        }
+        
+        receivedString[currentIndex] = UART_GetC(); // Lee el carácter recibido
+        
+        if (receivedString[currentIndex] == '\r')
+        {
+            uart_complete = 1;
+        }
+        
+        currentIndex++;
+        
+    }
     if (INTCONbits.T0IF)
     {
         counter += 1;
@@ -258,31 +282,7 @@ void __interrupt() int_routine(void)
             //noiseValues[noiseCounterValues] = NoiseValue; // B-30
             //noiseCounterValues++;
             
-            if (uart_complete != 0)
-            {
-                uart_complete = 0;
-                currentIndex = 0;
-                if (receivedString[0] = 'R')
-                {
-                    red = receivedString[1];
-                    green = receivedString[2];
-                    blue = receivedString[3];
-                    alpha = receivedString[4];
-                    fan_speed = receivedString[5];
-                    change_color(receivedString[4], receivedString[1], receivedString[2], receivedString[3], 10);
-                    fan_speed = (receivedString[5] * 167) / 100;
-                    CCPR1L = fan_speed;
-                    eeprom_save = 1;
-                    for (int i = 0; i < UART_STRING_TAM; i++)
-                    {
-                        putch(receivedString[i]);
-                        receivedString[i] = 0;
-                    }
-                    putch('\n');
-                }
-                
-                
-            }
+            
         }
         if (counterRuido1seg >= 200) /* B-40 */
         {
@@ -303,26 +303,44 @@ void __interrupt() int_routine(void)
             printf("TE %u\n", TempValue);
             read_co2(); // CO2
         }
-    }
-    //UART
-    if (PIR1bits.RCIF)
-    {
-        PIR1bits.RCIF = 0;
-        if (currentIndex == UART_STRING_TAM || uart_complete == 1)
+        if (uart_complete != 0)
         {
-            return;
+            uart_complete = 0;
+            currentIndex = 0;
+            if (receivedString[0] = 'R')
+            {
+                change_color(receivedString[4], receivedString[1], receivedString[2], receivedString[3], 10);
+                red = receivedString[1];
+                green = receivedString[2];
+                blue = receivedString[3];
+                alpha = receivedString[4];
+                fan_speed = receivedString[5];
+                
+                //printf("FAN %u\n", fan_speed);
+                //CCPR1L = fan_speed;
+                //cambioPotencia(receivedString[5]);
+                //fan_speed = (receivedString[5] / 100) * 167;
+                //printf("%c %c %c %c %c\n", receivedString[1], receivedString[2], receivedString[3], receivedString[4], receivedString[5]);
+                
+                for (int i = 0; i < UART_STRING_TAM; i++)
+                {
+                    //putch(receivedString[i]);
+                    receivedString[i] = 0;
+                }
+                eeprom_save = 1;
+                //putch('\n');
+            }
+
+
         }
-        
-        receivedString[currentIndex] = UART_GetC(); // Lee el carácter recibido
-        
-        if (receivedString[currentIndex] == '\r')
+        if (PIR1bits.TMR2IF)
         {
-            uart_complete = 1;
+            PIR1bits.TMR2IF = 0;
+            //printf("FAN %u\n", fan_speed);
+            CCPR1L = fan_speed;
         }
-        
-        currentIndex++;
-        
     }
+    
 }
 
 void main(void)
@@ -339,12 +357,14 @@ void main(void)
         green = EEPROM_Read(GREEN_ADDRESS);
         blue = EEPROM_Read(BLUE_ADDRESS);
         alpha = EEPROM_Read(INTEN_ADDRESS);
-        CCPR1L = EEPROM_Read(SPEED_ADDRESS);
+        
         //printf("%u %u %u %u %u\n", red, green, blue, alpha, CCPR1L);
         change_color(alpha, red, green, blue, 10);
+        init_pwm();
+        CCPR1L = EEPROM_Read(SPEED_ADDRESS);
         //printf("READ\n");
     }
-    //VEML7700_Init();
+    VEML7700_Init();
     while (1) /* B-10 */
     {
         if (eeprom_save != 0)
