@@ -192,9 +192,9 @@ def update_text():
                     hum_label.configure(text=f"Humidity: {abs(((((float(valor_x) / 1024.0) * 5.0) - 0.826) / 0.0315)):.1f}%")
                 elif tipo == "TE":
                     far = (((float(valor_x) / 1024.0) * 5.0) / 0.01)
-                    temp_label.configure(text=f"Temperature: {(far - 32) * 5/9:.1f}ºC")
+                    temp_label.configure(text=f"Temperature: {((far - 32) * 5/9)-10:.1f}ºC")
                 elif tipo == "PP":
-                    if valor_x.startswith("WAR"):
+                    if tipo.__contains__("WAR"):
                         co2_label.configure(text=f"CO2: NO DISPONIBLE", text_color='yellow')
                     elif valor_x.startswith("BUS"):
                         co2_label.configure(text=f"CO2: BUSY", text_color='red')

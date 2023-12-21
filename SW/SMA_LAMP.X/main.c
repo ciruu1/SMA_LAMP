@@ -24,6 +24,9 @@
 
 // With this library we configure the main settings on the MCU
 #include "Init/initall.c"
+
+// EEPROM
+#include "eeprom.c"
 // I2C lib
 
 
@@ -31,13 +34,38 @@
 #define I2C_ADDRESS 0x5A   // Dirección I2C del sensor iAQ-Core (7 bits, sin incluir el bit de lectura/escritura)
 #define I2C_READ_CMD 0xB5  // Comando de lectura
 
+#define VEML7700_ALS_CONFIG 0x00        /*!< Light configuration register */
+#define VEML7700_ALS_THREHOLD_HIGH 0x01 /*!< Light high threshold for irq */
+#define VEML7700_ALS_THREHOLD_LOW 0x02  /*!< Light low threshold for irq */
+#define VEML7700_ALS_POWER_SAVE 0x03    /*!< Power save register */
+#define VEML7700_ALS_DATA 0x04          /*!< The light data output */
+#define VEML7700_WHITE_DATA 0x05        /*!< The white light data output */
+#define VEML7700_INTERRUPTSTATUS 0x06   /*!< What IRQ (if any) */
+
+#define VEML7700_INTERRUPT_HIGH 0x4000  /*!< Interrupt status for high threshold */
+#define VEML7700_INTERRUPT_LOW 0x8000   /*!< Interrupt status for low threshold */
+
+
+#define VEML7700_GAIN_1_8 0x02          /*!< ALS gain 1/8x */
+#define VEML7700_IT_100MS 0x00          /*!< ALS intetgration time 100ms */
+#define VEML7700_PERS_1 0x00            /*!< ALS irq persisance 1 sample */
+#define VEML7700_POWERSAVE_MODE1 0x00   /*!< Power saving mode 1 */
+
+
 // Definiciones para la configuración del I2C y el sensor VEML7700
-#define I2C_ADDRESS_VEML7700 0x20
-#define VEML7700_ADDRESS_WRITE 0x20  // Dirección I2C del sensor VEML7700 en modo escritura
-#define VEML7700_ADDRESS_READ  0x21  // Dirección I2C del sensor VEML7700 en modo lectura
+#define VEML7700_ADDRESS_WRITE 0x10  // Dirección I2C del sensor VEML7700 en modo escritura
+#define VEML7700_ADDRESS_READ  0x11  // Dirección I2C del sensor VEML7700 en modo lectura
 #define VEML7700_COMMAND_CODE  0x00  // Código de comando para lectura de Lux
 
 #define UART_STRING_TAM 7
+
+// EEPROM
+#define RED_ADDRESS 0x1000
+#define GREEN_ADDRESS 0x1001
+#define BLUE_ADDRESS 0x1002
+#define INTEN_ADDRESS 0x1003
+#define SPEED_ADDRESS 0x1004
+#define DATA_ADDRESS 0x1005
 
 int uart_complete = 0;
 int counter;
@@ -58,10 +86,13 @@ int endString = 0;
 unsigned char red = 0xFF;
 unsigned char green = 0xFF;
 unsigned char blue = 0xFF;
-unsigned char alpha = 0xF0;
+unsigned char alpha = 0x0F;
 
 // FAN
 unsigned char fan_speed = 0;
+
+//EEPROM
+unsigned char eeprom_save = 0;
 
 
 void putch(char data)
@@ -81,18 +112,18 @@ void VEML7700_Init()
 int VEML7700_ReadLux() 
 {
     unsigned int luxValue = 0;
-
-    // Leer los dos bytes de Lux del sensor VEML7700
-    i2c_start();                  // Iniciar condición de inicio
-    if (i2c_write(VEML7700_ADDRESS_READ)) 
-    {// Enviar la dirección del dispositivo con el bit de lectura
-        luxValue = i2c_read(1) << 8;  // Leer el byte alto de Lux
-        //I2C_Ack();                   // Enviar ACK para indicar que se espera otro byte
-
-        luxValue |= i2c_read(0);      // Leer el byte bajo de Lux
-        //I2C_Nack();                  // Enviar NACK para indicar que no se esperan más bytes
-        
-    }   
+    
+    i2c_start();
+    i2c_write(VEML7700_ADDRESS_WRITE);
+    i2c_write(VEML7700_WHITE_DATA);
+    //i2c_stop();
+    
+    i2c_start();
+    i2c_write(VEML7700_ADDRESS_READ);
+    uint8_t read_data[2];
+    read_data[0] = i2c_read(0);  // Leer el byte alto de Lux
+    read_data[1] = i2c_read(1);      // Leer el byte bajo de Lux
+    luxValue = read_data[0] | read_data[1] << 8;
     i2c_stop();                  // Enviar condición de parada
    
     return luxValue;
@@ -233,8 +264,15 @@ void __interrupt() int_routine(void)
                 currentIndex = 0;
                 if (receivedString[0] = 'R')
                 {
+                    red = receivedString[1];
+                    green = receivedString[2];
+                    blue = receivedString[3];
+                    alpha = receivedString[4];
+                    fan_speed = receivedString[5];
                     change_color(receivedString[4], receivedString[1], receivedString[2], receivedString[3], 10);
-                    CCPR1L = (receivedString[5] * 167) / 100;
+                    fan_speed = (receivedString[5] * 167) / 100;
+                    CCPR1L = fan_speed;
+                    eeprom_save = 1;
                     for (int i = 0; i < UART_STRING_TAM; i++)
                     {
                         putch(receivedString[i]);
@@ -295,7 +333,33 @@ void main(void)
     counterRuido1seg = 0;
     counter5seg = 0;
     CCPR1L = 0;
-    VEML7700_Init();
-    while (1); /* B-10 */
+    if (EEPROM_Read(DATA_ADDRESS) != 0) {
+        
+        red = EEPROM_Read(RED_ADDRESS);
+        green = EEPROM_Read(GREEN_ADDRESS);
+        blue = EEPROM_Read(BLUE_ADDRESS);
+        alpha = EEPROM_Read(INTEN_ADDRESS);
+        CCPR1L = EEPROM_Read(SPEED_ADDRESS);
+        //printf("%u %u %u %u %u\n", red, green, blue, alpha, CCPR1L);
+        change_color(alpha, red, green, blue, 10);
+        //printf("READ\n");
+    }
+    //VEML7700_Init();
+    while (1) /* B-10 */
+    {
+        if (eeprom_save != 0)
+        {
+            
+            eeprom_save = 0;
+            EEPROM_Write(RED_ADDRESS, red);
+            EEPROM_Write(GREEN_ADDRESS, green);
+            EEPROM_Write(BLUE_ADDRESS, blue);
+            EEPROM_Write(INTEN_ADDRESS, alpha);
+            EEPROM_Write(SPEED_ADDRESS, fan_speed);
+            EEPROM_Write(DATA_ADDRESS, 0xFF);
+            //printf("%u %u %u %u %u\n", red, green, blue, alpha, fan_speed);
+            //printf("SAVE\n");
+        }
+    }
     return;
 }
