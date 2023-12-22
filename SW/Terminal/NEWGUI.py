@@ -176,6 +176,16 @@ def update_text():
             else:  # Maybe here load config on the GUI
                 pass
             '''
+            if received_data.startswith("WAR"):
+                co2_label.configure(text=f"CO2: NO DISPONIBLE", text_color='yellow')
+            elif received_data.startswith("BUS"):
+                co2_label.configure(text=f"CO2: BUSY", text_color='red')
+            elif received_data.startswith("ERR"):
+                co2_label.configure(text=f"CO2: ERROR", text_color='red')
+            elif received_data.startswith("UNK"):
+                co2_label.configure(text=f"CO2: UNKOWN", text_color='red')
+            else:  # Maybe here load config on the GUI
+                pass
 
             if match:
                 # Si encontramos un tipo y un número, los imprimimos
@@ -199,16 +209,9 @@ def update_text():
                         noise_label.configure(text=f"Ruido alto", text_color='red')
                     else:
                         pass
-                elif tipo.startswith("WAR"):
-                    co2_label.configure(text=f"CO2: NO DISPONIBLE", text_color='yellow')
-                elif tipo.startswith("BUS"):
-                    co2_label.configure(text=f"CO2: BUSY", text_color='red')
-                elif tipo.startswith("ERR"):
-                    co2_label.configure(text=f"CO2: ERROR", text_color='red')
-                elif tipo.startswith("UNK"):
-                    co2_label.configure(text=f"CO2: UNKOWN", text_color='red')
-                else:  # Maybe here load config on the GUI
+                else:
                     pass
+
             else:
                 print(f"Formato no válido {received_data}")
 

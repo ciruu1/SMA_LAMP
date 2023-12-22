@@ -83,7 +83,8 @@ void init_pwm(void) {
 
     
     TRISC2 = 0; // Puerto C configurado como salida
-    TRISC1 = 0;
+    //TRISC2 = 0; // Puerto C configurado como salida
+    //TRISC1 = 0;
     //ANSEL = 0; // E/S digital
     //ANSELH = 0; // E/S digital
 }
@@ -111,10 +112,10 @@ void init(void)
 {
     OSCCON = 0b00001000;
     INTCONbits.GIE = 1;
-    INTCONbits.PEIE = 1;
+    //INTCONbits.PEIE = 1;
     init_timer0();
     init_timer2();
-    //init_pwm();
+    init_pwm();
     init_uart();
     init_adc();
     init_I2C();

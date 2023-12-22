@@ -34,6 +34,7 @@
 #define I2C_ADDRESS 0x5A   // Dirección I2C del sensor iAQ-Core (7 bits, sin incluir el bit de lectura/escritura)
 #define I2C_READ_CMD 0xB5  // Comando de lectura
 
+#define VEML7700_ALS_DATA 0x04        /*!< The light data output */
 #define VEML7700_WHITE_DATA 0x05        /*!< The white light data output */
 
 #define VEML7700_GAIN_1_8 0x02          /*!< ALS gain 1/8x */
@@ -77,9 +78,11 @@ unsigned char red = 0xFF;
 unsigned char green = 0xFF;
 unsigned char blue = 0xFF;
 unsigned char alpha = 0x0F;
+unsigned char color_flag = 0;
 
 // FAN
-unsigned char fan_speed = 0;
+unsigned char fan_speed;
+unsigned char init_fan = 0;
 
 //EEPROM
 unsigned char eeprom_save = 0;
@@ -99,7 +102,7 @@ void VEML7700_Init()
         //printf("I2C INIT\n");
         i2c_write(VEML7700_COMMAND_CODE);
         i2c_write(0b00000000);
-        i2c_write(0b00010000);
+        i2c_write(0b00010000); //0b00010000
         i2c_stop();
     }
 }
@@ -118,10 +121,10 @@ int VEML7700_ReadLux()
             if (i2c_write(VEML7700_ADDRESS_READ))
             {
                 uint8_t read_data[2];
-                read_data[0] = i2c_read(0);  // Leer el byte alto de Lux
+                read_data[0] = i2c_read(1);  // Leer el byte alto de Lux
                 read_data[1] = i2c_read(0);      // Leer el byte bajo de Lux
-                //luxValue = read_data[1] << 8 | read_data[0];
-                luxValue = read_data[0];
+                luxValue = read_data[1] << 8 | read_data[0];
+                //luxValue = read_data[0];
                 i2c_stop();
             }
         
@@ -310,12 +313,13 @@ void __interrupt() int_routine(void)
             if (receivedString[0] = 'R')
             {
                 change_color(receivedString[4], receivedString[1], receivedString[2], receivedString[3], 10);
+                color_flag = 1;
                 red = receivedString[1];
                 green = receivedString[2];
                 blue = receivedString[3];
                 alpha = receivedString[4];
                 fan_speed = receivedString[5];
-                
+                CCPR1L = fan_speed;
                 //printf("FAN %u\n", fan_speed);
                 //CCPR1L = fan_speed;
                 //cambioPotencia(receivedString[5]);
@@ -333,12 +337,18 @@ void __interrupt() int_routine(void)
 
 
         }
+        if (init_fan != 0)
+        {
+            init_fan = 0;
+            CCPR1L = fan_speed;
+        }
+        /*
         if (PIR1bits.TMR2IF)
         {
             PIR1bits.TMR2IF = 0;
             //printf("FAN %u\n", fan_speed);
             CCPR1L = fan_speed;
-        }
+        }*/
     }
     
 }
@@ -350,23 +360,38 @@ void main(void)
     counterRuido10ms = 0;
     counterRuido1seg = 0;
     counter5seg = 0;
-    CCPR1L = 0;
-    if (EEPROM_Read(DATA_ADDRESS) != 0) {
+    //  CCPR1L = 0;
+    if (EEPROM_Read(DATA_ADDRESS) != 0) 
+    {
         
         red = EEPROM_Read(RED_ADDRESS);
         green = EEPROM_Read(GREEN_ADDRESS);
         blue = EEPROM_Read(BLUE_ADDRESS);
         alpha = EEPROM_Read(INTEN_ADDRESS);
-        
+        fan_speed = EEPROM_Read(SPEED_ADDRESS);
+        init_fan = 1;
         //printf("%u %u %u %u %u\n", red, green, blue, alpha, CCPR1L);
         change_color(alpha, red, green, blue, 10);
-        init_pwm();
-        CCPR1L = EEPROM_Read(SPEED_ADDRESS);
+        
         //printf("READ\n");
     }
+    else 
+    {
+        printf("NO MEM\n");
+        change_color(alpha, red, green, blue, 10);
+        //fan_speed = 0;
+    }
+    
+    //init_pwm();
     VEML7700_Init();
     while (1) /* B-10 */
     {
+        /*
+        if(color_flag != 0)
+        {
+            change_color(alpha, red, green, blue, 10);
+            color_flag = 0;
+        }*/
         if (eeprom_save != 0)
         {
             

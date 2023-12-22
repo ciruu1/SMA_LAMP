@@ -11,6 +11,7 @@
             <file>file:/home/ciruu/Documentos/SMA_LAMP/SW/SMA_LAMP.X/Init/initall.c</file>
             <file>file:/home/ciruu/Documentos/SMA_LAMP/SW/SMA_LAMP.X/poweroff.c</file>
             <file>file:/home/ciruu/Documentos/SMA_LAMP/SW/SMA_LAMP.X/eeprom.c</file>
+            <file>file:/home/ciruu/Documentos/SMA_LAMP/SW/SMA_LAMP.X/SPI/spi-master-v1.c</file>
             <file>file:/home/ciruu/Documentos/SMA_LAMP/SW/SMA_LAMP.X/I2C/i2c-v2.c</file>
         </group>
     </open-files>
