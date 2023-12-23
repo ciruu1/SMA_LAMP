@@ -62,10 +62,7 @@ int uart_complete = 0;
 int counter;
 int counterRuido10ms, counterRuido1seg, counter5seg; // 2 ticks, 200 ticks, 1000 ticks
 unsigned int NoiseValue, HumValue, TempValue;
-//unsigned char noiseValues[10];
 unsigned char currentNoiseValue = 0;
-//int noiseCounterValues; // 0..9
-//int maxNoise = 0;
 
 //USART
 unsigned char receivedString[UART_STRING_TAM];
@@ -125,14 +122,14 @@ int VEML7700_ReadLux()
                 read_data[1] = i2c_read(0);      // Leer el byte bajo de Lux
                 luxValue = read_data[1] << 8 | read_data[0];
                 //luxValue = read_data[0];
-                i2c_stop();
+                i2c_stop(); // Enviar condición de parada
             }
         
         }
         
     }
     
-                      // Enviar condición de parada
+                      
    
     return luxValue;
 }
@@ -275,17 +272,12 @@ void __interrupt() int_routine(void)
         INTCONbits.T0IF = 0;
         if (counterRuido10ms >= 2) /* B-20 */
         {
-            //debug('2'); // DEBUG
             counterRuido10ms = 0;
             NoiseValue = readADC(8); // AN8
             if (NoiseValue >= currentNoiseValue)
             {
                 currentNoiseValue = NoiseValue;
-            }
-            //noiseValues[noiseCounterValues] = NoiseValue; // B-30
-            //noiseCounterValues++;
-            
-            
+            } 
         }
         if (counterRuido1seg >= 200) /* B-40 */
         {
@@ -320,35 +312,18 @@ void __interrupt() int_routine(void)
                 alpha = receivedString[4];
                 fan_speed = receivedString[5];
                 CCPR1L = fan_speed;
-                //printf("FAN %u\n", fan_speed);
-                //CCPR1L = fan_speed;
-                //cambioPotencia(receivedString[5]);
-                //fan_speed = (receivedString[5] / 100) * 167;
-                //printf("%c %c %c %c %c\n", receivedString[1], receivedString[2], receivedString[3], receivedString[4], receivedString[5]);
-                
                 for (int i = 0; i < UART_STRING_TAM; i++)
                 {
-                    //putch(receivedString[i]);
                     receivedString[i] = 0;
                 }
                 eeprom_save = 1;
-                //putch('\n');
             }
-
-
         }
         if (init_fan != 0)
         {
             init_fan = 0;
             CCPR1L = fan_speed;
         }
-        /*
-        if (PIR1bits.TMR2IF)
-        {
-            PIR1bits.TMR2IF = 0;
-            //printf("FAN %u\n", fan_speed);
-            CCPR1L = fan_speed;
-        }*/
     }
     
 }
@@ -360,7 +335,6 @@ void main(void)
     counterRuido10ms = 0;
     counterRuido1seg = 0;
     counter5seg = 0;
-    //  CCPR1L = 0;
     if (EEPROM_Read(DATA_ADDRESS) != 0) 
     {
         
@@ -370,28 +344,18 @@ void main(void)
         alpha = EEPROM_Read(INTEN_ADDRESS);
         fan_speed = EEPROM_Read(SPEED_ADDRESS);
         init_fan = 1;
-        //printf("%u %u %u %u %u\n", red, green, blue, alpha, CCPR1L);
         change_color(alpha, red, green, blue, 10);
-        
-        //printf("READ\n");
     }
     else 
     {
         printf("NO MEM\n");
         change_color(alpha, red, green, blue, 10);
-        //fan_speed = 0;
     }
     
     //init_pwm();
     VEML7700_Init();
     while (1) /* B-10 */
     {
-        /*
-        if(color_flag != 0)
-        {
-            change_color(alpha, red, green, blue, 10);
-            color_flag = 0;
-        }*/
         if (eeprom_save != 0)
         {
             
@@ -402,8 +366,6 @@ void main(void)
             EEPROM_Write(INTEN_ADDRESS, alpha);
             EEPROM_Write(SPEED_ADDRESS, fan_speed);
             EEPROM_Write(DATA_ADDRESS, 0xFF);
-            //printf("%u %u %u %u %u\n", red, green, blue, alpha, fan_speed);
-            //printf("SAVE\n");
         }
     }
     return;

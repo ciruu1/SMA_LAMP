@@ -77,16 +77,7 @@ void init_pwm(void) {
     CCP1CONbits.CCP1M = 0b1100; // Modo PWM; P1A, P1C activos en alto; P1B, P1D activos en alto
     CCPR1L = 0; // El trabajo comienza en 0 %
     PR2 = 167; // Para que el periodo del PWM sea 30Khz o 0.033 ms
-    //CCP2CONbits.DC2B0 = 0b1;
-    //CCP2CONbits.DC2B1 = 0b1;
-    //CCP2CONbits.CCP2M = 0b1100;
-
-    
     TRISC2 = 0; // Puerto C configurado como salida
-    //TRISC2 = 0; // Puerto C configurado como salida
-    //TRISC1 = 0;
-    //ANSEL = 0; // E/S digital
-    //ANSELH = 0; // E/S digital
 }
 
 void init_I2C()
