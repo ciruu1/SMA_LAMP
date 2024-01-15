@@ -4,15 +4,6 @@ This repository contains the source code, hardware design, and documentation for
 
 ## Directory Structure
 
-.
-├── DOCS
-│   └── SysML
-├── HW
-│   └── SE_ejemplo
-└── SW
-    ├── SMA_LAMP.X
-    └── Terminal
-
 ### 1. DOCS
 
 - **Description:** This directory holds documentation related to the project.
